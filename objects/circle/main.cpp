@@ -2,6 +2,7 @@
 #include <GLUT/glut.h>
 #else
 #include <GL/glut.h>
+#include <GL/glext.h>
 #endif
 
 #include <stdlib.h>
@@ -11,7 +12,7 @@
 
 using namespace std;
 
-float r=20.0;  //circle "r"
+float r=15.0;  //circle "r"
 float d=0.8;     //cuboid width/2
 float deg=30.0;
 /* GLUT callback Handlers */
@@ -35,7 +36,7 @@ void display(void)
     glTranslatef(0,0,-50.0);  //Translation motion along(x,y,z) axis
     //rotation after translation (order matters)
     glRotatef(deg,1,0,0);  //(degree, x,y,z);
-    // deg+=1.5;
+    //deg+=1.5;
     glPointSize(10.0);
     glColor3f(1,0,1);
     float deg=0.0;
@@ -51,7 +52,6 @@ void display(void)
         // else{
         //     glColor3f(1,0,0);
         // }
-
         glBegin(GL_QUADS);
         //top
         glColor3f(1,1,0);
@@ -114,7 +114,7 @@ void display(void)
         glVertex3f(x-d,0,z-d); //-x,y=0,z
         glEnd();
         deg+=5.625;
-    }
+   }
     Sleep(100);
     glutSwapBuffers();
 }
@@ -130,12 +130,15 @@ void init()
     glClearColor(0.0,0.0,0.0,0.0);
     glEnable(GL_DEPTH_TEST);  //enables DEPTH_TEST
     glDepthFunc(GL_LEQUAL);   //Lesser depth & EQUAL depth valued objects displayed in the front
+
     //Do anti alias
+    //glEnable(GL_MULTISAMPLE_3DFX);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     glEnable(GL_POINT_SMOOTH);
     glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_POLYGON_SMOOTH);
+    //glEnable(GL_POLYGON_SMOOTH);
+
 }
 int main(int argc, char *argv[])
 {
