@@ -3,16 +3,16 @@
 #else
 #include <GL/glut.h>
 #include <GL/glext.h>
+#include <GL/freeglut.h>
 #endif
 
 #include <stdlib.h>
 #include<stdio.h>
-#include <stdio.h>
 #include<cmath>
 
 using namespace std;
 
-float r=15.0;  //circle "r"
+float r=20.0;  //circle "r"
 float d=0.8;     //cuboid width/2
 float deg=30.0;
 /* GLUT callback Handlers */
@@ -43,16 +43,36 @@ void display(void)
     for(int i=0;i<64;i++)
     {
         float x=r*cos(deg*(3.14/180)),y=rand()%10,z=r*sin(deg*(3.14/180));
-        // if(y<3){
-        //     glColor3f(0,1,0);
-        // }
-        // else if(y<6){
-        //     glColor3f(0,0,1);
-        // }
-        // else{
-        //     glColor3f(1,0,0);
-        // }
+
+        /*
+            (x-d,y,z-d)
+			   `-------------------------------.    (x+d,y,z-d)
+			   -o/.                           `s/-
+			   -: -/.                         `+ ./-
+			   -:   -/.                       `+   ./-
+			   -:     -/.                     `+     ./-
+			   -:       -/. (x-d,y,z+d)       `+       ./-
+			   -:         s-------------------:s---------s`   (x+d,y,z+d)
+			   -:         o                   `+         +`
+			   -:         o                   `+         +`
+			   -:         o                   `+         +`
+			   -:         o                   `+         +`
+			   -:         o                   `+         +`
+			   -:         o                   `+         +`
+			   -:         o                   `+         +`
+			   -:         o                   `+         +`
+			   -:         o       (x+d,0,z-d) `+         +`
+	(x-d,y,z-d) s+::::::::y::::::::::::::::::::+-        +`
+			     -/.      o                     ./-      +`
+			       -/.    o                       ./-    +`
+			         -/.  o                         ./-  +`
+			           ./-o                           `/:+`
+			             .o:::::::::::::::::::::::::::::/s`
+                    (x-d,0,z+d)                     (x+d,0,z+d)
+        */
+
         glBegin(GL_QUADS);
+
         //top
         glColor3f(1,1,0);
         glVertex3f(x-d,y,z+d); //-x,y,z
@@ -137,13 +157,15 @@ void init()
     glEnable(GL_BLEND);
     glEnable(GL_POINT_SMOOTH);
     glEnable(GL_LINE_SMOOTH);
-    //glEnable(GL_POLYGON_SMOOTH);
+    glEnable(GL_MULTISAMPLE);
+    glEnable(GL_POLYGON_SMOOTH);
 
 }
 int main(int argc, char *argv[])
 {
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
+    glutSetOption(GLUT_MULTISAMPLE, 8);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH| GL_MULTISAMPLE); //GL_MULTISAMPLE for anti aliasing
     glutInitWindowSize(500,500);
     glutInitWindowPosition(10,10);
     glutCreateWindow("Morphy");
