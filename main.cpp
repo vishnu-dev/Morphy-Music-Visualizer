@@ -7,7 +7,7 @@
 #include <SFML/Audio.hpp>
 #include <chrono>
 #include <sys/time.h>
-#include "kiss_fft.h"
+#include "kissfft/kiss_fft.h"
 #include <GL/glut.h>
 #include <GL/glext.h>
 #include <GL/freeglut.h>
