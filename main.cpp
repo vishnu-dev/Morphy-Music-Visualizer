@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <cmath>
 #include <time.h>
 #include <vector>
 #include <SFML/Audio.hpp>
@@ -15,7 +16,7 @@
 #ifndef M_PI
 #define M_PI 3.14159265358979324
 #endif
-#define N 2048
+#define N 1024
 
 std::vector<int> array(0);
 
@@ -23,7 +24,7 @@ std::vector<int> array(0);
 using namespace std;
 
 int j=0,seq=0;
-float r=15.0;  //circle "r"
+float r=20.0;  //circle "r"
 float d=0.8;     //cuboid width/2
 time_t st,et;
 int jstart,jend;
@@ -51,10 +52,8 @@ void getFft(const kiss_fft_cpx in[N], kiss_fft_cpx out[N])
     if ((cfg = kiss_fft_alloc(N, 0/*is_inverse_fft*/, NULL, NULL)) != NULL)
     {
         size_t i;
-
         kiss_fft(cfg, in, out);
         free(cfg);
-
     }
     else
     {
@@ -96,6 +95,9 @@ void circle3d()
     for(int i=0; i<64; i++)
     {
         float x=r*cos(deg*(3.14/180)),y=avgarr[j++],z=r*sin(deg*(3.14/180));
+        //float x=30-i,y=avgarr[j++],z=-2;
+        if(avgarr.size()<=j)
+            exit(0);
         // if(y<3){
         //     glColor3f(0,1,0);
         // }
@@ -205,26 +207,26 @@ void display(void)
 int main(int argc, char *argv[])
 {
 
+    //SFML usage error
     if (argc < 2)
     {
         std::cout << "Usage: wave_iteration <FILENAME>" << std::endl;
         return 1;
     }
-
     sf::SoundBuffer buffer;
     if (!buffer.loadFromFile(argv[1]))
         return 0;
-
     sf::Sound sound(buffer);
-    sound.play();
-    st=time(NULL);
+    //sound.play(); called just before display
+
     std::cout<<"SampleRate:"<<buffer.getSampleRate()<< std::endl;
     std::cout<<"SampleCount:"<<buffer.getSampleCount()<< std::endl;
+    std::cout<<"SampleCount/2: "<<buffer.getSampleCount()/2<< std::endl;
+    std::cout<<"expected no of samples:"<<(((int)(buffer.getSampleCount()/N))*N)/2<<std::endl;
     std::cout<<"channel:"<<buffer.getChannelCount()<<std::endl;
     std::cout << " " << buffer.getDuration().asSeconds() << " seconds"<< std::endl;
 
     std::vector<int>::iterator it;
-
     it = array.begin();
     timestamp_t t0 = get_timestamp();
 
@@ -263,51 +265,51 @@ int main(int argc, char *argv[])
             timestamp_t t1 = get_timestamp();
             double secs = (t1 - t0) / 1000000.0L;
 
-// print_vec(array);
+            // print_vec(array);
             std::cout << "Total exec time: " << secs << std::endl;
             break;
 
         }
 
-//std::cout<<"Framepointer = "<<framePointer<<std::endl;
-
+        //std::cout<<"Framepointer = "<<framePointer<<std::endl;
         getFft(in, out);
 
-// calculate magnitude of first n/2 FFT
+        // calculate magnitude of first n/2 FFT
         for (i = 0; i < N / 2; i++ )
         {
             int val;
             mag[i] = sqrt((out[i].r * out[i].r) + (out[i].i * out[i].i));
 
 
-// N/2 Log magnitude values.
-//for (i = 0; i < N/2 ; ++i){
-//  x =   10 * log10(mag[i]) ;
-//  printf("  log x= %g ", log(x));
+            // N/2 Log magnitude values.
+            //for (i = 0; i < N/2 ; ++i){
+            //  x =   10 * log10(mag[i]) ;
+            //  printf("  log x= %g ", log(x));
             val = graph[i] = abs((log(mag[i]) * 10)/4);
-//  std::cout<<graph[i]<<std::endl;
+            //  std::cout<<graph[i]<<std::endl;
             it = array.end();
             it = array.insert(it, val);
 
         }
 
     }
-//std::cout<<array[3]<<std::endl;;
-//print_vec(array);
+    //std::cout<<array[3]<<std::endl;;
+    //print_vec(array);
+    std::cout<<"actual no of samples: "<<array.size();
+    //std::vector<int>::size_type sz = array.size();
 
-    std::vector<int>::size_type sz = array.size();
 
     //average
-    double sum=0,cnt=0,maxv=(int)(buffer.getSampleRate()/(10*64));
+    double sum=0,cnt=0,maxv=(int)((buffer.getSampleRate()/2)/(10*64));
     int si=0,ei=(int)maxv;
-    for (size_t i = 0; i < (int)sz/maxv; i++)
+    for (size_t i = 0; i < (int)array.size()/maxv; i++)
     {
         sum=0;
         for(int j=si; j<ei; j++)
         {
             sum+=array[si];
         }
-        avgarr.push_back((sum/(int)maxv)/4);
+        avgarr.push_back((sum/(int)maxv)/2);
         si=ei;
         ei=ei+(int)maxv;
         //std::cout <<"display val: "<<avgarr[i] << std::endl;
@@ -322,6 +324,8 @@ int main(int argc, char *argv[])
     glutInitWindowPosition(700,10);
     glutCreateWindow("Morphy");
 
+    sound.play();
+    st=time(NULL);
 
     init();
     glutDisplayFunc(display);
