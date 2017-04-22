@@ -5,8 +5,10 @@
 #include <cmath>
 #include <time.h>
 #include <vector>
+#include <algorithm>    // std::sort
 #include <SFML/Audio.hpp>
 #include <chrono>
+#include <array>
 #include <sys/time.h>
 #include "kissfft/kiss_fft.h"
 #include <GL/glut.h>
@@ -17,19 +19,22 @@
 #define M_PI 3.14159265358979324
 #endif
 #define N 1024
+//#define N 8192
 
-std::vector<int> array(0);
-
+std::vector<int> ampdb(0);
+std::vector<int> frequency(0);
 
 using namespace std;
-
+double bin[2][60]={0.0};
 int j=0,seq=0;
 float r=20.0;  //circle "r"
 float d=0.8;     //cuboid width/2
 time_t st,et;
 int jstart,jend;
 float deg=30.0;
-std::vector<double> avgarr; //for average value
+vector< array<double,60> > avgarr; //for average value
+double SAMPLE_COUNT;
+double SAMPLE_RATE;
 
 //SFML global declarations for seeking play time
 sf::SoundBuffer buffer;
@@ -92,21 +97,13 @@ void circle3d()
     glColor3f(1,0,1);
     float deg=0.0;
     jstart=j;
-    for(int i=0; i<64; i++)
+    for(int i=0; i<60; i++)
     {
-        float x=r*cos(deg*(3.14/180)),y=avgarr[j++],z=r*sin(deg*(3.14/180));
-        //float x=30-i,y=avgarr[j++],z=-2;
         if(avgarr.size()<=j)
             exit(0);
-        // if(y<3){
-        //     glColor3f(0,1,0);
-        // }
-        // else if(y<6){
-        //     glColor3f(0,0,1);
-        // }
-        // else{
-        //     glColor3f(1,0,0);
-        // }
+        float x=r*cos(deg*(3.14/180)),y=avgarr[j][i],z=r*sin(deg*(3.14/180));
+        //float x=30-i,y=avgarr[j][i],z=-2;
+        //end of music data
         glBegin(GL_QUADS);
         //top
         glColor3f(1,1,0);
@@ -168,10 +165,12 @@ void circle3d()
         glColor3f(0,1,1);
         glVertex3f(x-d,0,z-d); //-x,y=0,z
         glEnd();
-        deg+=5.625;
+        deg+=6;
+        //deg+=5.625;
     }
     jend=j;
-    Sleep(100);
+    j++;
+    Sleep(97);
 }
 
 void init()
@@ -204,9 +203,22 @@ void display(void)
     //if(sound.getPlayingOffset().asSeconds()==buffer.getDuration().asSeconds())
     //    exit(0);
 }
+int BinSrch(int freq)
+{
+    int i;
+    if(freq<=20||freq>20000)
+        return -1;
+    freq-=20;
+    for(i=0;i<60;i++)
+    {
+        if(freq>(i*333) && freq<=(i+1)*333)
+            break;
+    }
+
+    return i;
+}
 int main(int argc, char *argv[])
 {
-
     //SFML usage error
     if (argc < 2)
     {
@@ -219,20 +231,24 @@ int main(int argc, char *argv[])
     sf::Sound sound(buffer);
     //sound.play(); called just before display
 
-    std::cout<<"SampleRate:"<<buffer.getSampleRate()<< std::endl;
-    std::cout<<"SampleCount:"<<buffer.getSampleCount()<< std::endl;
+    std::cout<<"SampleRate:"<<(SAMPLE_RATE= buffer.getSampleRate())<< std::endl;
+    std::cout<<"SampleCount:"<<(SAMPLE_COUNT= buffer.getSampleCount())<< std::endl;
     std::cout<<"SampleCount/2: "<<buffer.getSampleCount()/2<< std::endl;
     std::cout<<"expected no of samples:"<<(((int)(buffer.getSampleCount()/N))*N)/2<<std::endl;
     std::cout<<"channel:"<<buffer.getChannelCount()<<std::endl;
     std::cout << " " << buffer.getDuration().asSeconds() << " seconds"<< std::endl;
 
     std::vector<int>::iterator it;
-    it = array.begin();
+    std::vector<int>::iterator f_it;
+    it = ampdb.begin();
+    f_it = frequency.begin();
+
     timestamp_t t0 = get_timestamp();
 
     int i, j, x;
     int graph[N / 2];
     double mag[N / 2];
+    double sf = buffer.getSampleRate();
     double roof = buffer.getSampleCount();
     double framePointer = 0;
     std::vector<double> data;
@@ -253,22 +269,17 @@ int main(int argc, char *argv[])
             in[j].r = multiplier * data[i];
             in[j].i = 0;  //stores N samples
         }
-
         if (framePointer < roof - N )
         {
             framePointer = i;
-
         }
         else
         {
-
             timestamp_t t1 = get_timestamp();
             double secs = (t1 - t0) / 1000000.0L;
-
-            // print_vec(array);
+            // print_vec(ampdb);
             std::cout << "Total exec time: " << secs << std::endl;
             break;
-
         }
 
         //std::cout<<"Framepointer = "<<framePointer<<std::endl;
@@ -277,45 +288,52 @@ int main(int argc, char *argv[])
         // calculate magnitude of first n/2 FFT
         for (i = 0; i < N / 2; i++ )
         {
-            int val;
+            int val,f;
             mag[i] = sqrt((out[i].r * out[i].r) + (out[i].i * out[i].i));
-
+            f = (i*sf)/N;
 
             // N/2 Log magnitude values.
             //for (i = 0; i < N/2 ; ++i){
             //  x =   10 * log10(mag[i]) ;
             //  printf("  log x= %g ", log(x));
-            val = graph[i] = abs((log(mag[i]) * 10)/4);
+            val = graph[i] = abs((log(mag[i]) * 10)/6);
             //  std::cout<<graph[i]<<std::endl;
-            it = array.end();
-            it = array.insert(it, val);
-
+            it = ampdb.end();
+            f_it = frequency.end();
+            it = ampdb.insert(it, val);
+            f_it = frequency.insert(f_it,f);
+            //std::cout<<"f["<<i<<"]= "<<frequency[i]<<std::endl;
         }
 
     }
     //std::cout<<array[3]<<std::endl;;
     //print_vec(array);
-    std::cout<<"actual no of samples: "<<array.size();
-    //std::vector<int>::size_type sz = array.size();
+    std::cout<<"actual no of samples: "<<ampdb.size();
+    //std::vector<int>::size_type sz = ampdb.size();
 
-
-    //average
-    double sum=0,cnt=0,maxv=(int)((buffer.getSampleRate()/2)/(10*64));
-    int si=0,ei=(int)maxv;
-    for (size_t i = 0; i < (int)array.size()/maxv; i++)
+    int k=0;
+    for(int i=0;i<(SAMPLE_COUNT)/(SAMPLE_RATE*0.1);i++)
     {
-        sum=0;
-        for(int j=si; j<ei; j++)
-        {
-            sum+=array[si];
-        }
-        avgarr.push_back((sum/(int)maxv)/2);
-        si=ei;
-        ei=ei+(int)maxv;
-        //std::cout <<"display val: "<<avgarr[i] << std::endl;
+            //cout<<i<<endl<<ampdb.size()<<endl;;
+            array <double,60> temp={0};
+            int cnt[60]={0};
+            for(int j=0;j<(SAMPLE_RATE*0.1)/2;j++)
+            {
+                int index;
+                if(k>ampdb.size()){
+                    break;
+                }
+                if((index=BinSrch(frequency[k]))!=-1)
+                {
+                    temp[index]+=ampdb[k];
+                    cnt[index]++;
+                }
+                k++;
+            }
+            for(int j=0;j<60;j++)
+                temp[j]/=cnt[j];
+            avgarr.push_back(temp);
     }
-
-
 
     glutInit(&argc, argv);
     glutSetOption(GLUT_MULTISAMPLE, 8);
@@ -336,3 +354,4 @@ int main(int argc, char *argv[])
     return 0;
 
 }
+
