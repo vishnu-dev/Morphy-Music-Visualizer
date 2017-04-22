@@ -14,6 +14,8 @@
 #include <GL/glut.h>
 #include <GL/glext.h>
 #include <GL/freeglut.h>
+#include "lodepng/lodepng.h"
+#include "lodepng/lodepng.cpp"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979324
@@ -26,6 +28,7 @@ std::vector<int> frequency(0);
 
 using namespace std;
 int flag=0,temp=0;
+int W,H;
 double bin[2][60]={0.0};
 int j=0,seq=0;
 float r=20.0;  //circle "r"
@@ -36,7 +39,7 @@ float deg=90.0;
 vector< array<double,60> > avgarr; //for average value
 double SAMPLE_COUNT;
 double SAMPLE_RATE;
-
+vector<unsigned char> logo;
 //SFML global declarations for seeking play time
 sf::SoundBuffer buffer;
 sf::Sound sound(buffer);
@@ -80,6 +83,8 @@ void print_vec(const std::vector<int> vec)
 
 void reshape(int w, int h)
 {
+    W=w;
+    H=h;
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -88,28 +93,30 @@ void reshape(int w, int h)
     glLoadIdentity() ;
 }
 
-void drawStrokeText(char*string,int x,int y,int z)
+void drawStrokeText(char*str,int x,int y,int z)
 {
 	  char *c;
+	  float wt = glutStrokeLength(GLUT_STROKE_ROMAN,(unsigned char*)str)*0.4;
 	  glPushMatrix();
-	  glTranslatef(x, y+8,z);
+	  glTranslatef(-(wt/2), y+8,z);
 	  glScalef(0.4f,0.4f,0.4f);
 
-	  for (c=string; *c != NULL; c++)
+	  for (c=str; *c != NULL; c++)
 	  {
     		glutStrokeCharacter(GLUT_STROKE_ROMAN , *c);
 	  }
 	  glPopMatrix();
 }
 
-void instructText(char*string,int x,int y,int z)
+void instructText(char*str,int x,int y,int z)
 {
 	  char *c;
+	  float wt = glutStrokeLength(GLUT_STROKE_ROMAN,(unsigned char*)str)*0.1;
 	  glPushMatrix();
-	  glTranslatef(x, y+8,z);
+	  glTranslatef(-wt/2, y+8,z);
 	  glScalef(0.1f,0.1f,0.1f);
 
-	  for (c=string; *c != NULL; c++)
+	  for (c=str; *c != NULL; c++)
 	  {
     		glutStrokeCharacter(GLUT_STROKE_ROMAN , *c);
 	  }
@@ -265,6 +272,8 @@ void display(void)
     glColor3f(0,1,0);
 
     if(flag==0){
+        glRasterPos3f(-180,-125,-500);
+        glDrawPixels(250,250,GL_RGBA,GL_UNSIGNED_BYTE,&logo[0]);
         drawStrokeText("MORPHY",-100,125,-200);
         instructText("Press space to continue!",-75,-100,-200);
     }
@@ -274,6 +283,7 @@ void display(void)
             circle3d();
         }
         else{
+
             instructText("Paused!",-75,-100,-200);
         }
     }
@@ -295,9 +305,19 @@ int BinSrch(int freq)
 
     return i;
 }
+void loadlogo(){
+    int error;
+    unsigned width = 250;
+    unsigned height = 250;
+    const char* name = "logo.png";
+    if((error=lodepng::decode(logo,width,height,name))){
+            printf("Error %s",lodepng_error_text(error));
+            exit(0);
+    }
+}
 int main(int argc, char *argv[])
 {
-    //SFML usage error
+    loadlogo();    //SFML usage error
     if (argc < 2)
     {
         std::cout << "Usage: wave_iteration <FILENAME>" << std::endl;
@@ -415,8 +435,8 @@ int main(int argc, char *argv[])
     glutInit(&argc, argv);
     glutSetOption(GLUT_MULTISAMPLE, 8);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH|GL_MULTISAMPLE);
-    glutInitWindowSize(500,500);
-    glutInitWindowPosition(700,10);
+    glutInitWindowSize(1366,768);
+    glutInitWindowPosition(0,0);
     glutCreateWindow("Morphy");
     glutKeyboardFunc( processKeys );
     glutSpecialFunc( processSpecialKeys );
