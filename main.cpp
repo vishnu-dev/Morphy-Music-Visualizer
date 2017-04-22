@@ -12,7 +12,6 @@
 #include <GL/glut.h>
 #include <GL/glext.h>
 #include <GL/freeglut.h>
-
 #ifndef M_PI
 #define M_PI 3.14159265358979324
 #endif
@@ -23,6 +22,7 @@ std::vector<int> array(0);
 
 using namespace std;
 
+int flag=0,temp=0;
 int j=0,seq=0;
 float r=20.0;  //circle "r"
 float d=0.8;     //cuboid width/2
@@ -30,7 +30,6 @@ time_t st,et;
 int jstart,jend;
 float deg=30.0;
 std::vector<double> avgarr; //for average value
-
 //SFML global declarations for seeking play time
 sf::SoundBuffer buffer;
 sf::Sound sound(buffer);
@@ -77,16 +76,44 @@ void reshape(int w, int h)
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(60,(float)w/(float)h, 1, 100);
+    gluPerspective(90,(float)w/(float)h, 1, 1000);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity() ;
+}
+
+void drawStrokeText(char*string,int x,int y,int z)
+{
+	  char *c;
+	  glPushMatrix();
+	  glTranslatef(x, y+8,z);
+	  glScalef(0.4f,0.4f,0.4f);
+
+	  for (c=string; *c != NULL; c++)
+	  {
+    		glutStrokeCharacter(GLUT_STROKE_ROMAN , *c);
+	  }
+	  glPopMatrix();
+}
+
+void instructText(char*string,int x,int y,int z)
+{
+	  char *c;
+	  glPushMatrix();
+	  glTranslatef(x, y+8,z);
+	  glScalef(0.1f,0.1f,0.1f);
+
+	  for (c=string; *c != NULL; c++)
+	  {
+    		glutStrokeCharacter(GLUT_STROKE_ROMAN , *c);
+	  }
+	  glPopMatrix();
 }
 
 void circle3d()
 {
     glTranslatef(0,0,-50.0);  //Translation motion along(x,y,z) axis
     //rotation after translation (order matters)
-    glRotatef(deg,1,0,0);  //(degree, x,y,z);
+    //glRotatef(deg,1,0,0);  //(degree, x,y,z);
     //deg+=1.5;
     glPointSize(10.0);
     glColor3f(1,0,1);
@@ -94,8 +121,8 @@ void circle3d()
     jstart=j;
     for(int i=0; i<64; i++)
     {
-        float x=r*cos(deg*(3.14/180)),y=avgarr[j++],z=r*sin(deg*(3.14/180));
-        //float x=30-i,y=avgarr[j++],z=-2;
+        //float x=r*cos(deg*(3.14/180)),y=avgarr[j++],z=r*sin(deg*(3.14/180));
+        float x=30-i,y=avgarr[j++],z=-2;
         if(avgarr.size()<=j)
             exit(0);
         // if(y<3){
@@ -190,8 +217,41 @@ void init()
     glEnable(GL_MULTISAMPLE);
     glEnable(GL_POLYGON_SMOOTH);
 }
+
+void processKeys(unsigned char key, int x, int y) {
+
+      if (key == 27) // escape key
+            exit(0);
+      else if(key == 32) // spacebar key
+      {
+        if(temp==0){
+            flag=1;
+            printf("here");
+            temp++;
+            sound.play();
+        }
+        else if(temp==1){
+            printf(" not here");
+            sound.pause();
+            temp--;
+        }
+    }
+}
+
+void processSpecialKeys(int key, int x, int y)
+{
+      switch(key) {
+            case GLUT_KEY_LEFT:
+                printf("left pressed!");
+                  break;
+            case GLUT_KEY_RIGHT:
+                printf("right pressed!");
+                  break;
+      }
+}
 void idle()
 {
+    Sleep(100);
     glutPostRedisplay();
 }
 void display(void)
@@ -199,12 +259,27 @@ void display(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  //clears display with buffer color & depth values set in init()
     //circle
     glLoadIdentity();  //Loads identity matrix for each iteration of display
-    circle3d();
+    //circle3d();
+    glColor3f(0,1,0);
+
+    if(flag==0){
+        drawStrokeText("MORPHY",-100,125,-200);
+        instructText("Press space to continue!",-75,-100,-200);
+    }
+    else{
+        glClearColor(0,0,0,0);
+        if(temp==1){
+            circle3d();
+        }
+        else{
+            instructText("Paused!",-75,-100,-200);
+        }
+    }
     glutSwapBuffers();
     //if(sound.getPlayingOffset().asSeconds()==buffer.getDuration().asSeconds())
     //    exit(0);
 }
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
 
     //SFML usage error
@@ -213,10 +288,9 @@ int main(int argc, char *argv[])
         std::cout << "Usage: wave_iteration <FILENAME>" << std::endl;
         return 1;
     }
-    sf::SoundBuffer buffer;
+
     if (!buffer.loadFromFile(argv[1]))
         return 0;
-    sf::Sound sound(buffer);
     //sound.play(); called just before display
 
     std::cout<<"SampleRate:"<<buffer.getSampleRate()<< std::endl;
@@ -323,8 +397,9 @@ int main(int argc, char *argv[])
     glutInitWindowSize(500,500);
     glutInitWindowPosition(700,10);
     glutCreateWindow("Morphy");
+    glutKeyboardFunc( processKeys );
+    glutSpecialFunc( processSpecialKeys );
 
-    sound.play();
     st=time(NULL);
 
     init();
