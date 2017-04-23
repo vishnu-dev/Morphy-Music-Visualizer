@@ -1,14 +1,11 @@
 #include <iostream>
-#include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <cmath>
 #include <time.h>
 #include <vector>
-#include <algorithm>    // std::sort
+#include <array>
 #include <SFML/Audio.hpp>
 #include <chrono>
-#include <array>
 #include <sys/time.h>
 #include "kissfft/kiss_fft.h"
 #include <GL/glut.h>
@@ -22,7 +19,6 @@
 #endif
 #define N 1024
 
-
 std::vector<int> ampdb(0);
 std::vector<int> frequency(0);
 
@@ -32,8 +28,8 @@ int W,H;
 double bin[2][60]={0.0};
 int j=0;
 float r=20.0;  //circle "r"
-float d=0.8;     //cuboid width/2
-float deg=90.0;
+float d=0.3;     //cuboid width/2
+float deg=30.0;
 vector< array<double,60> > avgarr; //for average value
 double SAMPLE_COUNT;
 double SAMPLE_RATE;
@@ -68,6 +64,7 @@ void getFft(const kiss_fft_cpx in[N], kiss_fft_cpx out[N])
     }
 
 }
+
 /** print vector **/
 void print_vec(const std::vector<int> vec)
 {
@@ -122,21 +119,20 @@ void instructText(char*str,int x,int y,int z)
 
 void circle3d()
 {
-    glTranslatef(0,0,-50.0);  //Translation motion along(x,y,z) axis
+    glTranslatef(0,-10,-50.0);  //Translation motion along(x,y,z) axis
     //rotation after translation (order matters)
-    glRotatef(deg,1,0,0);  //(degree, x,y,z);
+    //glRotatef(deg,1,0,0);  //(degree, x,y,z);
     //deg+=1.5;
     glPointSize(10.0);
     glColor3f(1,0,1);
     float deg=0.0;
-    //jstart=j;
     for(int i=0; i<60; i++)
     {
 
         if((int)avgarr.size()<=j)
             exit(0);
-        float x=r*cos(deg*(3.14/180)),y=avgarr[j][i],z=r*sin(deg*(3.14/180));
-        //float x=30-i,y=avgarr[j][i],z=-2;
+        //float x=r*cos(deg*(3.14/180)),y=avgarr[j][i],z=r*sin(deg*(3.14/180));
+        float x=-30+i,y=avgarr[j][i],z=-2;
         //end of music data
         glBegin(GL_QUADS);
         //top
@@ -202,7 +198,6 @@ void circle3d()
         deg+=6;
         //deg+=5.625;
     }
-    //jend=j;
     j++;
     Sleep(97);
 }
@@ -255,11 +250,13 @@ void processSpecialKeys(int key, int x, int y)
                   break;
       }
 }
+
 void idle()
 {
     //Sleep(100);
     glutPostRedisplay();
 }
+
 void display(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  //clears display with buffer color & depth values set in init()
@@ -287,6 +284,7 @@ void display(void)
     //if(sound.getPlayingOffset().asSeconds()==buffer.getDuration().asSeconds())
     //    exit(0);
 }
+
 int BinSrch(int freq)
 {
     int i;
@@ -301,6 +299,7 @@ int BinSrch(int freq)
 
     return i;
 }
+
 void loadlogo(){
     int error;
     unsigned width = 250;
@@ -311,6 +310,7 @@ void loadlogo(){
             exit(0);
     }
 }
+
 int main(int argc, char *argv[])
 {
     loadlogo();    //SFML usage error
@@ -335,7 +335,6 @@ int main(int argc, char *argv[])
     std::vector<int>::iterator f_it;
     it = ampdb.begin();
     f_it = frequency.begin();
-
     timestamp_t t0 = get_timestamp();
 
     int i;
@@ -353,10 +352,8 @@ int main(int argc, char *argv[])
 
     while (framePointer < roof  )
     {
-
         for ( i = framePointer, j = 0; i < (framePointer + N) && framePointer < roof - N ; i++, j++  )
         {
-
             //Apply window function on the sample
             double multiplier = 0.5 * (1 - cos(2 * M_PI * j / (N - 1)));
             in[j].r = multiplier * data[i];
@@ -385,12 +382,43 @@ int main(int argc, char *argv[])
             mag[i] = sqrt((out[i].r * out[i].r) + (out[i].i * out[i].i));
             f = (i*sf)/N;
 
-            // N/2 Log magnitude values.
-            //for (i = 0; i < N/2 ; ++i){
-            //  x =   10 * log10(mag[i]) ;
-            //  printf("  log x= %g ", log(x));
-            val = graph[i] = abs((log(mag[i]) * 10)/6);
-            //  std::cout<<graph[i]<<std::endl;
+            /*
+            Frequency_Range	Frequency_Values
+            Sub-bass	    20 to 60 Hz
+            Bass	        60 to 250 Hz
+            Low midrange	250 to 500 Hz
+            Midrange	    500 Hz to 2 kHz
+            Upper midrange	2 to 4 kHz
+            Presence	    4 to 6 kHz
+            Brilliance	    6 to 20 kHz
+            */
+
+            if (f<=60){
+                val = graph[i] = abs( (float)(log(mag[i]) * 10)/9.0);
+            }
+            else if (f>60 && f<=250){
+                val = graph[i] = abs((float)(log(mag[i]) * 10)/8.0);
+            }
+            else if (f>250 && f<=500){
+                val = graph[i] = abs((float)(log(mag[i]) * 10)/7.0);
+            }
+            else if (f>500 && f<=2000){
+                val = graph[i] = abs((float)(log(mag[i]) * 10)/6.0);
+            }
+            else if (f>2000 && f<=4000){
+                val = graph[i] = abs((float)(log(mag[i]) * 10)/5.0);
+            }
+            else if (f>4000 && f<=6000){
+                val = graph[i] = abs((float)(log(mag[i]) * 10)/4.0);
+            }
+            else if (f>6000 && f<=20000){
+                val = graph[i] = abs((float)(log(mag[i]) * 10)/3.5);
+            }
+            else{
+                val = graph[i] = abs((float)(log(mag[i]) * 10)/2.0);
+            }
+
+            //std::cout<<"amp: "<<val<<" freq: "<<f<<std::endl;
             it = ampdb.end();
             f_it = frequency.end();
             it = ampdb.insert(it, val);
@@ -424,14 +452,16 @@ int main(int argc, char *argv[])
                 k++;
             }
             for(int j=0;j<60;j++)
+            {
                 temp[j]/=cnt[j];
+            }
             avgarr.push_back(temp);
     }
 
     glutInit(&argc, argv);
     glutSetOption(GLUT_MULTISAMPLE, 8);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH|GL_MULTISAMPLE);
-    glutInitWindowSize(1366,768);
+    glutInitWindowSize(800,600);
     glutInitWindowPosition(0,0);
     glutCreateWindow("Morphy");
     glutKeyboardFunc( processKeys );
