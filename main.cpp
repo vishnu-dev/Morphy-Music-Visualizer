@@ -1,46 +1,29 @@
-#include <iostream>
-#include <stdlib.h>
-#include <cmath>
-#include <time.h>
-#include <vector>
-#include <array>
-#include <SFML/Audio.hpp>
-#include <chrono>
-#include <sys/time.h>
-#include "kissfft/kiss_fft.h"
-#include <GL/glut.h>
-#include <GL/glext.h>
-#include <GL/freeglut.h>
+#include "headers.h"
 #include "lodepng/lodepng.h"
 #include "lodepng/lodepng.cpp"
 
-#ifndef M_PI
-#define M_PI 3.14159265358979324
-#endif
-#define N 1024
-
-std::vector<int> ampdb(0);
-std::vector<int> frequency(0);
-
 using namespace std;
+
+vector<int> ampdb(0);
+vector<int> frequency(0);
+vector<unsigned char> logo;
+
+//SFML global declarations for seeking play time
+sf::SoundBuffer buffer;
+sf::Sound sound(buffer);
 int flag=0,temp=0;
 int W,H;
-double bin[2][60]={0.0};
+typedef unsigned long long timestamp_t;
 int j=0;
 float r=20.0;  //circle "r"
 float d=0.3;     //cuboid width/2
 float deg=30.0;
-vector< array<double,60> > avgarr; //for average value
 double SAMPLE_COUNT;
 double SAMPLE_RATE;
-vector<unsigned char> logo;
-//SFML global declarations for seeking play time
-sf::SoundBuffer buffer;
-sf::Sound sound(buffer);
-
 kiss_fft_cpx in[N], out[N];
+int styleselect=0;
+int NO_STYLE=2;
 
-typedef unsigned long long timestamp_t;
 static timestamp_t
 get_timestamp ()
 {
@@ -117,91 +100,6 @@ void instructText(char*str,int x,int y,int z)
 	  glPopMatrix();
 }
 
-void circle3d()
-{
-    glTranslatef(0,-10,-50.0);  //Translation motion along(x,y,z) axis
-    //rotation after translation (order matters)
-    //glRotatef(deg,1,0,0);  //(degree, x,y,z);
-    //deg+=1.5;
-    glPointSize(10.0);
-    glColor3f(1,0,1);
-    float deg=0.0;
-    for(int i=0; i<60; i++)
-    {
-
-        if((int)avgarr.size()<=j)
-            exit(0);
-        //float x=r*cos(deg*(3.14/180)),y=avgarr[j][i],z=r*sin(deg*(3.14/180));
-        float x=-30+i,y=avgarr[j][i],z=-2;
-        //end of music data
-        glBegin(GL_QUADS);
-        //top
-        glColor3f(1,1,0);
-        glVertex3f(x-d,y,z+d); //-x,y,z
-        glColor3f(1,1,1);
-        glVertex3f(x+d,y,z+d); //x,y,z
-        glColor3f(1,0,1);
-        glVertex3f(x+d,y,z-d); //x,y,-z
-        glColor3f(1,0,0);
-        glVertex3f(x-d,y,z-d); //-x,y,-z
-
-        //bottom
-        glColor3f(0,1,0);
-        glVertex3f(x-d,0,z+d); //-x,y=0,z
-        glColor3f(0,1,1);
-        glVertex3f(x+d,0,z+d); //x,y=0,z
-        glColor3f(0,0,1);
-        glVertex3f(x+d,0,z-d); //x,y=0,-z
-        glColor3f(0,1,1);
-        glVertex3f(x-d,0,z-d); //-x,y=0,-z
-
-        //left
-        glColor3f(0,1,0);
-        glVertex3f(x-d,0,z+d); //-x,y=0,z
-        glColor3f(0,1,1);
-        glVertex3f(x-d,0,z-d); //-x,y=0,-z
-        glColor3f(1,0,0);
-        glVertex3f(x-d,y,z-d); //-x,y,-z
-        glColor3f(1,1,0);
-        glVertex3f(x-d,y,z+d); //-x,y,z
-
-        //right
-        glColor3f(0,1,1);
-        glVertex3f(x+d,0,z+d); //x,y=0,z
-        glColor3f(0,0,1);
-        glVertex3f(x+d,0,z-d); //x,y=0,-z
-        glColor3f(1,0,1);
-        glVertex3f(x+d,y,z-d); //x,y,-z
-        glColor3f(1,1,1);
-        glVertex3f(x+d,y,z+d); //x,y,z
-
-        //front
-        glColor3f(0,1,1);
-        glVertex3f(x+d,0,z+d); //x,y=0,z
-        glColor3f(1,1,1);
-        glVertex3f(x+d,y,z+d); //x,y,z
-        glColor3f(1,1,0);
-        glVertex3f(x-d,y,z+d); //-x,y,z
-        glColor3f(0,1,0);
-        glVertex3f(x-d,0,z+d); //-x,y=0,z
-
-        //back
-        glColor3f(0,0,1);
-        glVertex3f(x+d,0,z-d); //x,y=0,z
-        glColor3f(1,0,1);
-        glVertex3f(x+d,y,z-d); //x,y,z
-        glColor3f(1,0,0);
-        glVertex3f(x-d,y,z-d); //-x,y,z
-        glColor3f(0,1,1);
-        glVertex3f(x-d,0,z-d); //-x,y=0,z
-        glEnd();
-        deg+=6;
-        //deg+=5.625;
-    }
-    j++;
-    Sleep(97);
-}
-
 void init()
 {
     //sets color buffer bit
@@ -227,12 +125,10 @@ void processKeys(unsigned char key, int x, int y) {
       {
         if(temp==0){
             flag=1;
-            printf("here");
             temp++;
             sound.play();
         }
         else if(temp==1){
-            printf(" not here");
             sound.pause();
             temp--;
         }
@@ -243,11 +139,16 @@ void processSpecialKeys(int key, int x, int y)
 {
       switch(key) {
             case GLUT_KEY_LEFT:
-                printf("left pressed!");
-                  break;
+                if(styleselect==0){
+                    styleselect=NO_STYLE-1;
+                }
+                else{
+                    styleselect--;
+                }
+                break;
             case GLUT_KEY_RIGHT:
-                printf("right pressed!");
-                  break;
+                styleselect=(styleselect+1)%NO_STYLE;
+                break;
       }
 }
 
@@ -274,7 +175,12 @@ void display(void)
     else{
         glClearColor(0,0,0,0);
         if(temp==1){
-            circle3d();
+            if(styleselect==0){
+                circle3d();
+            }
+            else if(styleselect==1){
+                bars();
+            }
         }
         else{
             instructText((char *)"Paused!",-75,-100,-200);
