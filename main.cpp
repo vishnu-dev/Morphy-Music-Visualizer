@@ -21,7 +21,7 @@
 #define M_PI 3.14159265358979324
 #endif
 #define N 1024
-//#define N 8192
+
 
 std::vector<int> ampdb(0);
 std::vector<int> frequency(0);
@@ -30,11 +30,9 @@ using namespace std;
 int flag=0,temp=0;
 int W,H;
 double bin[2][60]={0.0};
-int j=0,seq=0;
+int j=0;
 float r=20.0;  //circle "r"
 float d=0.8;     //cuboid width/2
-time_t st,et;
-int jstart,jend;
 float deg=90.0;
 vector< array<double,60> > avgarr; //for average value
 double SAMPLE_COUNT;
@@ -60,7 +58,6 @@ void getFft(const kiss_fft_cpx in[N], kiss_fft_cpx out[N])
     kiss_fft_cfg cfg;
     if ((cfg = kiss_fft_alloc(N, 0/*is_inverse_fft*/, NULL, NULL)) != NULL)
     {
-        size_t i;
         kiss_fft(cfg, in, out);
         free(cfg);
     }
@@ -101,7 +98,7 @@ void drawStrokeText(char*str,int x,int y,int z)
 	  glTranslatef(-(wt/2), y+8,z);
 	  glScalef(0.4f,0.4f,0.4f);
 
-	  for (c=str; *c != NULL; c++)
+	  for (c=str; *c !=0 /*NULL*/; c++)
 	  {
     		glutStrokeCharacter(GLUT_STROKE_ROMAN , *c);
 	  }
@@ -116,7 +113,7 @@ void instructText(char*str,int x,int y,int z)
 	  glTranslatef(-wt/2, y+8,z);
 	  glScalef(0.1f,0.1f,0.1f);
 
-	  for (c=str; *c != NULL; c++)
+	  for (c=str; *c != 0 /*NULL*/ ; c++)
 	  {
     		glutStrokeCharacter(GLUT_STROKE_ROMAN , *c);
 	  }
@@ -132,11 +129,11 @@ void circle3d()
     glPointSize(10.0);
     glColor3f(1,0,1);
     float deg=0.0;
-    jstart=j;
+    //jstart=j;
     for(int i=0; i<60; i++)
     {
 
-        if(avgarr.size()<=j)
+        if((int)avgarr.size()<=j)
             exit(0);
         float x=r*cos(deg*(3.14/180)),y=avgarr[j][i],z=r*sin(deg*(3.14/180));
         //float x=30-i,y=avgarr[j][i],z=-2;
@@ -205,7 +202,7 @@ void circle3d()
         deg+=6;
         //deg+=5.625;
     }
-    jend=j;
+    //jend=j;
     j++;
     Sleep(97);
 }
@@ -274,8 +271,8 @@ void display(void)
     if(flag==0){
         glRasterPos3f(-180,-125,-500);
         glDrawPixels(250,250,GL_RGBA,GL_UNSIGNED_BYTE,&logo[0]);
-        drawStrokeText("MORPHY",-100,125,-200);
-        instructText("Press space to continue!",-75,-100,-200);
+        drawStrokeText((char *)"MORPHY",-100,125,-200);
+        instructText((char *)"Press space to continue!",-75,-100,-200);
     }
     else{
         glClearColor(0,0,0,0);
@@ -283,8 +280,7 @@ void display(void)
             circle3d();
         }
         else{
-
-            instructText("Paused!",-75,-100,-200);
+            instructText((char *)"Paused!",-75,-100,-200);
         }
     }
     glutSwapBuffers();
@@ -342,7 +338,7 @@ int main(int argc, char *argv[])
 
     timestamp_t t0 = get_timestamp();
 
-    int i, j, x;
+    int i;
     int graph[N / 2];
     double mag[N / 2];
     double sf = buffer.getSampleRate();
@@ -350,7 +346,7 @@ int main(int argc, char *argv[])
     double framePointer = 0;
     std::vector<double> data;
     auto array1 = buffer.getSamples();
-    for (int i = 0; i < buffer.getSampleCount(); i++)
+    for (int i = 0; i < (int)buffer.getSampleCount(); i++)
     {
         data.push_back((double)array1[i]);
     }
@@ -411,13 +407,13 @@ int main(int argc, char *argv[])
     int k=0;
     for(int i=0;i<(SAMPLE_COUNT)/(SAMPLE_RATE*0.1);i++)
     {
-            cout<<i<<endl<<ampdb.size()<<endl;;
+            //cout<<i<<endl<<ampdb.size()<<endl;;
             array <double,60> temp={0};
             int cnt[60]={0};
             for(int j=0;j<(SAMPLE_RATE*0.1)/2;j++)
             {
                 int index;
-                if(k>ampdb.size()){
+                if(k>(int)ampdb.size()){
                     break;
                 }
                 if((index=BinSrch(frequency[k]))!=-1)
@@ -441,7 +437,7 @@ int main(int argc, char *argv[])
     glutKeyboardFunc( processKeys );
     glutSpecialFunc( processSpecialKeys );
 
-    st=time(NULL);
+    //st=time(NULL);
 
     init();
     glutDisplayFunc(display);
