@@ -22,7 +22,7 @@ double SAMPLE_COUNT;
 double SAMPLE_RATE;
 kiss_fft_cpx in[N], out[N];
 int styleselect=0;
-int NO_STYLE=2;
+int NO_STYLE=3;
 
 static timestamp_t
 get_timestamp ()
@@ -180,6 +180,9 @@ void display(void)
             }
             else if(styleselect==1){
                 bars();
+            }
+            else if(styleselect==2){
+                dust();
             }
         }
         else{
