@@ -24,6 +24,8 @@ kiss_fft_cpx in[N], out[N];
 int styleselect=0;
 int NO_STYLE=2;
 
+void mesh();
+
 static timestamp_t
 get_timestamp ()
 {
@@ -179,7 +181,8 @@ void display(void)
                 circle3d();
             }
             else if(styleselect==1){
-                bars();
+                //bars();
+                mesh();
             }
         }
         else{
