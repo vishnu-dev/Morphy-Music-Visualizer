@@ -22,7 +22,7 @@ double SAMPLE_COUNT;
 double SAMPLE_RATE;
 kiss_fft_cpx in[N], out[N];
 int styleselect=0;
-int NO_STYLE=3;
+int NO_STYLE=6;
 
 static timestamp_t
 get_timestamp ()
@@ -154,7 +154,6 @@ void processSpecialKeys(int key, int x, int y)
 
 void idle()
 {
-    //Sleep(100);
     glutPostRedisplay();
 }
 
@@ -182,7 +181,16 @@ void display(void)
                 bars();
             }
             else if(styleselect==2){
+                pentagon();
+            }
+            else if(styleselect==3){
                 dust();
+            }
+            else if(styleselect==4){
+                CubicalMesh();
+            }
+            else if(styleselect==5){
+                waves();
             }
         }
         else{
@@ -190,8 +198,8 @@ void display(void)
         }
     }
     glutSwapBuffers();
-    //if(sound.getPlayingOffset().asSeconds()==buffer.getDuration().asSeconds())
-    //    exit(0);
+    if(sound.getPlayingOffset().asSeconds()==buffer.getDuration().asSeconds())
+        exit(0);
 }
 
 int BinSrch(int freq)
