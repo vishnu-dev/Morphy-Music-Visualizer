@@ -35,4 +35,6 @@ extern kiss_fft_cpx in[N], out[N];
 void circle3d();
 void bars();
 void dust();
-
+void pentagon();
+void CubicalMesh();
+void waves();

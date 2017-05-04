@@ -22,7 +22,7 @@ double SAMPLE_COUNT;
 double SAMPLE_RATE;
 kiss_fft_cpx in[N], out[N];
 int styleselect=0;
-int NO_STYLE=3;
+int NO_STYLE=6;
 
 void mesh();
 
@@ -167,7 +167,6 @@ void processSpecialKeys(int key, int x, int y)
 
 void idle()
 {
-    //Sleep(100);
     glutPostRedisplay();
 }
 
@@ -201,9 +200,22 @@ void display(void)
             {
                 bars();
             }
+<<<<<<< HEAD
             else if(styleselect==2)
             {
+=======
+            else if(styleselect==2){
+                pentagon();
+            }
+            else if(styleselect==3){
+>>>>>>> 1baaa01e19d0e33418a7ca7b474c2860350a713d
                 dust();
+            }
+            else if(styleselect==4){
+                CubicalMesh();
+            }
+            else if(styleselect==5){
+                waves();
             }
         }
         else
@@ -212,8 +224,8 @@ void display(void)
         }
     }
     glutSwapBuffers();
-    //if(sound.getPlayingOffset().asSeconds()==buffer.getDuration().asSeconds())
-    //    exit(0);
+    if(sound.getPlayingOffset().asSeconds()==buffer.getDuration().asSeconds())
+        exit(0);
 }
 
 int BinSrch(int freq)
