@@ -74,32 +74,32 @@ void reshape(int w, int h)
 
 void drawStrokeText(char*str,int x,int y,int z)
 {
-	  char *c;
-	  float wt = glutStrokeLength(GLUT_STROKE_ROMAN,(unsigned char*)str)*0.4;
-	  glPushMatrix();
-	  glTranslatef(-(wt/2), y+8,z);
-	  glScalef(0.4f,0.4f,0.4f);
+    char *c;
+    float wt = glutStrokeLength(GLUT_STROKE_ROMAN,(unsigned char*)str)*0.4;
+    glPushMatrix();
+    glTranslatef(-(wt/2), y+8,z);
+    glScalef(0.4f,0.4f,0.4f);
 
-	  for (c=str; *c !=0 /*NULL*/; c++)
-	  {
-    		glutStrokeCharacter(GLUT_STROKE_ROMAN , *c);
-	  }
-	  glPopMatrix();
+    for (c=str; *c !=0 /*NULL*/; c++)
+    {
+        glutStrokeCharacter(GLUT_STROKE_ROMAN, *c);
+    }
+    glPopMatrix();
 }
 
 void instructText(char*str,int x,int y,int z)
 {
-	  char *c;
-	  float wt = glutStrokeLength(GLUT_STROKE_ROMAN,(unsigned char*)str)*0.1;
-	  glPushMatrix();
-	  glTranslatef(-wt/2, y+8,z);
-	  glScalef(0.1f,0.1f,0.1f);
+    char *c;
+    float wt = glutStrokeLength(GLUT_STROKE_ROMAN,(unsigned char*)str)*0.1;
+    glPushMatrix();
+    glTranslatef(-wt/2, y+8,z);
+    glScalef(0.1f,0.1f,0.1f);
 
-	  for (c=str; *c != 0 /*NULL*/ ; c++)
-	  {
-    		glutStrokeCharacter(GLUT_STROKE_ROMAN , *c);
-	  }
-	  glPopMatrix();
+    for (c=str; *c != 0 /*NULL*/ ; c++)
+    {
+        glutStrokeCharacter(GLUT_STROKE_ROMAN, *c);
+    }
+    glPopMatrix();
 }
 
 void init()
@@ -119,39 +119,50 @@ void init()
     glEnable(GL_POLYGON_SMOOTH);
 }
 
-void processKeys(unsigned char key, int x, int y) {
+void processKeys(unsigned char key, int x, int y)
+{
 
-      if (key == 27) // escape key
-            exit(0);
-      else if(key == 32) // spacebar key
-      {
-        if(temp==0){
+    if (key == 27) // escape key
+        exit(0);
+    else if(key == 32) // spacebar key
+    {
+        if(temp==0)
+        {
             flag=1;
             temp++;
             sound.play();
         }
-        else if(temp==1){
+        else if(temp==1)
+        {
             sound.pause();
             temp--;
         }
+    }
+    else if(key == 77 || key==109)
+    {
+        sound.pause();
+        flag=0;
     }
 }
 
 void processSpecialKeys(int key, int x, int y)
 {
-      switch(key) {
-            case GLUT_KEY_LEFT:
-                if(styleselect==0){
-                    styleselect=NO_STYLE-1;
-                }
-                else{
-                    styleselect--;
-                }
-                break;
-            case GLUT_KEY_RIGHT:
-                styleselect=(styleselect+1)%NO_STYLE;
-                break;
-      }
+    switch(key)
+    {
+    case GLUT_KEY_LEFT:
+        if(styleselect==0)
+        {
+            styleselect=NO_STYLE-1;
+        }
+        else
+        {
+            styleselect--;
+        }
+        break;
+    case GLUT_KEY_RIGHT:
+        styleselect=(styleselect+1)%NO_STYLE;
+        break;
+    }
 }
 
 void idle()
@@ -168,27 +179,35 @@ void display(void)
     //circle3d();
     glColor3f(0,1,0);
 
-    if(flag==0){
+    if(flag==0)
+    {
+        glClearColor(0,(77.0/255),(64.0/255),0);
         glRasterPos3f(-180,-125,-500);
         glDrawPixels(250,250,GL_RGBA,GL_UNSIGNED_BYTE,&logo[0]);
         drawStrokeText((char *)"MORPHY",-100,125,-200);
         instructText((char *)"Press space to continue!",-75,-100,-200);
     }
-    else{
-        glClearColor(0,0,0,0);
-        if(temp==1){
-            if(styleselect==0){
+    else
+    {
+        glClearColor((178.0/255),(223.0/255),(219.0/255),0);
+        printf("%f",sound.getPlayingOffset());
+        if(temp==1)
+        {
+            if(styleselect==0)
+            {
                 circle3d();
             }
-            else if(styleselect==1){
-                //bars();
-                mesh();
+            else if(styleselect==1)
+            {
+                bars();
             }
-            else if(styleselect==2){
+            else if(styleselect==2)
+            {
                 dust();
             }
         }
-        else{
+        else
+        {
             instructText((char *)"Paused!",-75,-100,-200);
         }
     }
@@ -203,7 +222,7 @@ int BinSrch(int freq)
     if(freq<=20||freq>20000)
         return -1;
     freq-=20;
-    for(i=0;i<60;i++)
+    for(i=0; i<60; i++)
     {
         if(freq>(i*333) && freq<=(i+1)*333)
             break;
@@ -212,14 +231,16 @@ int BinSrch(int freq)
     return i;
 }
 
-void loadlogo(){
+void loadlogo()
+{
     int error;
     unsigned width = 250;
     unsigned height = 250;
     const char* name = "logo.png";
-    if((error=lodepng::decode(logo,width,height,name))){
-            printf("Error %s",lodepng_error_text(error));
-            exit(0);
+    if((error=lodepng::decode(logo,width,height,name)))
+    {
+        printf("Error %s",lodepng_error_text(error));
+        exit(0);
     }
 }
 
@@ -305,28 +326,36 @@ int main(int argc, char *argv[])
             Brilliance	    6 to 20 kHz
             */
 
-            if (f<=60){
+            if (f<=60)
+            {
                 val = graph[i] = abs( (float)(log(mag[i]) * 10)/9.0);
             }
-            else if (f>60 && f<=250){
+            else if (f>60 && f<=250)
+            {
                 val = graph[i] = abs((float)(log(mag[i]) * 10)/8.0);
             }
-            else if (f>250 && f<=500){
+            else if (f>250 && f<=500)
+            {
                 val = graph[i] = abs((float)(log(mag[i]) * 10)/7.0);
             }
-            else if (f>500 && f<=2000){
+            else if (f>500 && f<=2000)
+            {
                 val = graph[i] = abs((float)(log(mag[i]) * 10)/6.0);
             }
-            else if (f>2000 && f<=4000){
+            else if (f>2000 && f<=4000)
+            {
                 val = graph[i] = abs((float)(log(mag[i]) * 10)/5.0);
             }
-            else if (f>4000 && f<=6000){
+            else if (f>4000 && f<=6000)
+            {
                 val = graph[i] = abs((float)(log(mag[i]) * 10)/4.0);
             }
-            else if (f>6000 && f<=20000){
+            else if (f>6000 && f<=20000)
+            {
                 val = graph[i] = abs((float)(log(mag[i]) * 10)/3.5);
             }
-            else{
+            else
+            {
                 val = graph[i] = abs((float)(log(mag[i]) * 10)/2.0);
             }
 
@@ -345,29 +374,30 @@ int main(int argc, char *argv[])
     //std::vector<int>::size_type sz = ampdb.size();
 
     int k=0;
-    for(int i=0;i<(SAMPLE_COUNT)/(SAMPLE_RATE*0.1);i++)
+    for(int i=0; i<(SAMPLE_COUNT)/(SAMPLE_RATE*0.1); i++)
     {
-            //cout<<i<<endl<<ampdb.size()<<endl;;
-            array <double,60> temp={0};
-            int cnt[60]={0};
-            for(int j=0;j<(SAMPLE_RATE*0.1)/2;j++)
+        //cout<<i<<endl<<ampdb.size()<<endl;;
+        array <double,60> temp= {0};
+        int cnt[60]= {0};
+        for(int j=0; j<(SAMPLE_RATE*0.1)/2; j++)
+        {
+            int index;
+            if(k>(int)ampdb.size())
             {
-                int index;
-                if(k>(int)ampdb.size()){
-                    break;
-                }
-                if((index=BinSrch(frequency[k]))!=-1)
-                {
-                    temp[index]+=ampdb[k];
-                    cnt[index]++;
-                }
-                k++;
+                break;
             }
-            for(int j=0;j<60;j++)
+            if((index=BinSrch(frequency[k]))!=-1)
             {
-                temp[j]/=cnt[j];
+                temp[index]+=ampdb[k];
+                cnt[index]++;
             }
-            avgarr.push_back(temp);
+            k++;
+        }
+        for(int j=0; j<60; j++)
+        {
+            temp[j]/=cnt[j];
+        }
+        avgarr.push_back(temp);
     }
 
     glutInit(&argc, argv);
