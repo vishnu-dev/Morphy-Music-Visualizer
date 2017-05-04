@@ -164,9 +164,9 @@ void pentagon()
 /******************* CUBICAL_MESH **********************/
 void CubicalMesh()
 {
-    glTranslatef(-80,0,-50.0);
+    glTranslatef(-55,-20,-50.0);
     //Translation motion along(x,y,z) axis
-    float deg=60.0;
+    float deg=45.0;
     //rotation after translation (order matters)
     glRotatef(deg,1,0,0);  //(degree, x,y,z);
     //deg+=1.5;
@@ -307,6 +307,43 @@ void waves()
             glVertex3f(x+(d/4),-y,z);
             glVertex3f(x+(d/2),0,z);
         glEnd();
+    }
+    j++;
+    Sleep(97);
+}
+
+/******************* DWaves **********************/
+void DWaves()
+{
+    glTranslatef(-155,-40,-50.0);
+    //Translation motion along(x,y,z) axis
+    float deg=60.0;
+    //rotation after translation (order matters)
+    //+glRotatef(deg,1,0,0);  //(degree, x,y,z);
+    //deg+=1.5;
+    d=3;
+    glPointSize(5.0);
+    glColor3f(1,0,1);
+    int z=0,x=-5*5*d;
+    for(int i=0; i<60; i++)
+    {
+
+        if((int)avgarr.size()<=j)
+            exit(0);
+        float y=avgarr[j][i];
+        if(i%10==0){
+            z-=(5*d);
+            x=5*5*d;
+        }
+        else{
+            x+=(5*d);
+        }
+        //end of music data
+        glBegin(GL_POINTS);
+            glVertex3f(x+=2,y,z);
+        glEnd();
+        //deg+=6;
+        //deg+=5.625;
     }
     j++;
     Sleep(97);

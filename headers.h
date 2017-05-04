@@ -38,3 +38,4 @@ void dust();
 void pentagon();
 void CubicalMesh();
 void waves();
+void DWaves();

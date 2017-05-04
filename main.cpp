@@ -22,7 +22,7 @@ double SAMPLE_COUNT;
 double SAMPLE_RATE;
 kiss_fft_cpx in[N], out[N];
 int styleselect=0;
-int NO_STYLE=6;
+int NO_STYLE=7;
 
 static timestamp_t
 get_timestamp ()
@@ -191,6 +191,9 @@ void display(void)
             }
             else if(styleselect==5){
                 waves();
+            }
+            else if(styleselect==6){
+                DWaves();
             }
         }
         else{
