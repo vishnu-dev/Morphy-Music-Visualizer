@@ -24,6 +24,8 @@ kiss_fft_cpx in[N], out[N];
 int styleselect=0;
 int NO_STYLE=7;
 
+void mesh();
+
 static timestamp_t
 get_timestamp ()
 {
@@ -133,6 +135,11 @@ void processKeys(unsigned char key, int x, int y) {
             temp--;
         }
     }
+    else if(key == 77 || key==109)
+    {
+        sound.pause();
+        flag=0;
+    }
 }
 
 void processSpecialKeys(int key, int x, int y)
@@ -201,8 +208,8 @@ void display(void)
         }
     }
     glutSwapBuffers();
-    if(sound.getPlayingOffset().asSeconds()==buffer.getDuration().asSeconds())
-        exit(0);
+    //if(sound.getPlayingOffset().asSeconds()==buffer.getDuration().asSeconds())
+    //    exit(0);
 }
 
 int BinSrch(int freq)
