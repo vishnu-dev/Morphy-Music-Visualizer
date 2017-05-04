@@ -185,11 +185,8 @@ void display(void)
                 circle3d();
             }
             else if(styleselect==1){
-                //bars();
-                mesh();
+                bars();
             }
-            else if(styleselect==2)
-            {
             else if(styleselect==2){
                 pentagon();
             }
