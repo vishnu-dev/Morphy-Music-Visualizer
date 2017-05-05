@@ -22,7 +22,7 @@ double SAMPLE_COUNT;
 double SAMPLE_RATE;
 kiss_fft_cpx in[N], out[N];
 int styleselect=0;
-int NO_STYLE=7;
+int NO_STYLE=8;
 
 static timestamp_t
 get_timestamp ()
@@ -233,10 +233,10 @@ void display(void)
             {
                 mesh3D();
             }
-	    else if(styleselect==7)
-	    {
-		DWaves();
-	    }
+            else if(styleselect==7)
+            {
+            DWaves();
+            }
         }
         else
         {
