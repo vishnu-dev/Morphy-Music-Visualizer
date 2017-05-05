@@ -202,6 +202,12 @@ void display(void)
             glVertex3f(-250+(int)timepercent,-190.0,-200.0);
             glVertex3f(-250+(int)timepercent,-200.0,-200);
             glEnd();
+            glBegin(GL_LINE_LOOP);
+            glVertex3f(-252,-202.0,-200.0);
+            glVertex3f(-252,-188.0,-200.0);
+            glVertex3f(-252+500,-188.0,-200.0);
+            glVertex3f(-252+500,-202.0,-200);
+            glEnd();
             instructText((char*)cstr,-250,-175,-200);
             nav();
             //instructText((char*)cstr,-250,-175,-200);
