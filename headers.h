@@ -5,6 +5,9 @@
 #include <vector>
 #include <array>
 #include <SFML/Audio.hpp>
+#include <string>
+#include <sstream>
+#include <iomanip>
 #include <chrono>
 #include <sys/time.h>
 #include "kissfft/kiss_fft.h"
@@ -38,3 +41,7 @@ void dust();
 void pentagon();
 void CubicalMesh();
 void waves();
+void mesh3D();
+void pausebutton();
+void nav();
+

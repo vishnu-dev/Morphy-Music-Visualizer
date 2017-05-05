@@ -1,7 +1,6 @@
 #include "headers.h"
 #include "lodepng/lodepng.h"
 #include "lodepng/lodepng.cpp"
-
 using namespace std;
 
 vector<int> ampdb(0);
@@ -22,9 +21,7 @@ double SAMPLE_COUNT;
 double SAMPLE_RATE;
 kiss_fft_cpx in[N], out[N];
 int styleselect=0;
-int NO_STYLE=6;
-
-void mesh();
+int NO_STYLE=7;
 
 static timestamp_t
 get_timestamp ()
@@ -74,38 +71,36 @@ void reshape(int w, int h)
 
 void drawStrokeText(char*str,int x,int y,int z)
 {
-	  char *c;
-	  float wt = glutStrokeLength(GLUT_STROKE_ROMAN,(unsigned char*)str)*0.4;
-	  glPushMatrix();
-	  glTranslatef(-(wt/2), y+8,z);
-	  glScalef(0.4f,0.4f,0.4f);
-
-	  for (c=str; *c !=0 /*NULL*/; c++)
-	  {
-    		glutStrokeCharacter(GLUT_STROKE_ROMAN , *c);
-	  }
-	  glPopMatrix();
+    char *c;
+    float wt = glutStrokeLength(GLUT_STROKE_ROMAN,(unsigned char*)str)*0.4;
+    glPushMatrix();
+    glTranslatef(-(wt/2), y+8,z);
+    glScalef(0.4f,0.4f,0.4f);
+    glColor3f(1,1,1);
+    for (c=str; *c !=0 /*NULL*/; c++)
+    {
+        glutStrokeCharacter(GLUT_STROKE_ROMAN, *c);
+    }
+    glPopMatrix();
 }
 
 void instructText(char*str,int x,int y,int z)
 {
-	  char *c;
-	  float wt = glutStrokeLength(GLUT_STROKE_ROMAN,(unsigned char*)str)*0.1;
-	  glPushMatrix();
-	  glTranslatef(-wt/2, y+8,z);
-	  glScalef(0.1f,0.1f,0.1f);
+    char *c;
+    float wt = glutStrokeLength(GLUT_STROKE_ROMAN,(unsigned char*)str)*0.1;
+    glPushMatrix();
+    glTranslatef(-wt/2, y+8,z);
+    glScalef(0.1f,0.1f,0.1f);
 
-	  for (c=str; *c != 0 /*NULL*/ ; c++)
-	  {
-    		glutStrokeCharacter(GLUT_STROKE_ROMAN , *c);
-	  }
-	  glPopMatrix();
+    for (c=str; *c != 0 /*NULL*/ ; c++)
+    {
+        glutStrokeCharacter(GLUT_STROKE_ROMAN, *c);
+    }
+    glPopMatrix();
 }
 
 void init()
 {
-    //sets color buffer bit
-    glClearColor(0.0,0.0,0.0,0.0);
     glEnable(GL_DEPTH_TEST);  //enables DEPTH_TEST
     glDepthFunc(GL_LEQUAL);   //Lesser depth & EQUAL depth valued objects displayed in the front
 
@@ -119,18 +114,21 @@ void init()
     glEnable(GL_POLYGON_SMOOTH);
 }
 
-void processKeys(unsigned char key, int x, int y) {
+void processKeys(unsigned char key, int x, int y)
+{
 
-      if (key == 27) // escape key
-            exit(0);
-      else if(key == 32) // spacebar key
-      {
-        if(temp==0){
+    if (key == 27) // escape key
+        exit(0);
+    else if(key == 32) // spacebar key
+    {
+        if(temp==0)
+        {
             flag=1;
             temp++;
             sound.play();
         }
-        else if(temp==1){
+        else if(temp==1)
+        {
             sound.pause();
             temp--;
         }
@@ -144,19 +142,22 @@ void processKeys(unsigned char key, int x, int y) {
 
 void processSpecialKeys(int key, int x, int y)
 {
-      switch(key) {
-            case GLUT_KEY_LEFT:
-                if(styleselect==0){
-                    styleselect=NO_STYLE-1;
-                }
-                else{
-                    styleselect--;
-                }
-                break;
-            case GLUT_KEY_RIGHT:
-                styleselect=(styleselect+1)%NO_STYLE;
-                break;
-      }
+    switch(key)
+    {
+    case GLUT_KEY_LEFT:
+        if(styleselect==0)
+        {
+            styleselect=NO_STYLE-1;
+        }
+        else
+        {
+            styleselect--;
+        }
+        break;
+    case GLUT_KEY_RIGHT:
+        styleselect=(styleselect+1)%NO_STYLE;
+        break;
+    }
 }
 
 void idle()
@@ -166,42 +167,76 @@ void idle()
 
 void display(void)
 {
+        //sets color buffer bit
+    glClearColor(28/255.0,49/255.0,58/255.0,0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  //clears display with buffer color & depth values set in init()
     //circle
     glLoadIdentity();  //Loads identity matrix for each iteration of display
     //circle3d();
     glColor3f(0,1,0);
 
-    if(flag==0){
-        glRasterPos3f(-180,-125,-500);
+    if(flag==0)
+    {
+        glRasterPos3f(-200,-150,-500);
         glDrawPixels(250,250,GL_RGBA,GL_UNSIGNED_BYTE,&logo[0]);
         drawStrokeText((char *)"MORPHY",-100,125,-200);
         instructText((char *)"Press space to continue!",-75,-100,-200);
     }
-    else{
+    else
+    {
+        std::ostringstream ss;
+        float tottime = (int)buffer.getDuration().asSeconds();
+        float curtime = (int)sound.getPlayingOffset().asSeconds();
+        float timepercent = (curtime/tottime)*500;
+        ss << (int)curtime;
+        const std::string tmp = "Time : " + ss.str();
+        const char* cstr = tmp.c_str();
         glClearColor(0,0,0,0);
-        if(temp==1){
-            if(styleselect==0){
+        if(temp==1)
+        {
+            glColor3f(128/255.0,222/255.0,234/255.0);
+            glBegin(GL_POLYGON);
+            glVertex3f(-250,-200.0,-200.0);
+            glVertex3f(-250,-190.0,-200.0);
+            glVertex3f(-250+(int)timepercent,-190.0,-200.0);
+            glVertex3f(-250+(int)timepercent,-200.0,-200);
+            glEnd();
+            instructText((char*)cstr,-250,-175,-200);
+            nav();
+            //instructText((char*)cstr,-250,-175,-200);
+            if(styleselect==0)
+            {
                 circle3d();
             }
-            else if(styleselect==1){
+            else if(styleselect==1)
+            {
                 bars();
             }
-            else if(styleselect==2){
+            else if(styleselect==2)
+            {
                 pentagon();
             }
-            else if(styleselect==3){
+            else if(styleselect==3)
+            {
                 dust();
             }
-            else if(styleselect==4){
+            else if(styleselect==4)
+            {
                 CubicalMesh();
             }
-            else if(styleselect==5){
+            else if(styleselect==5)
+            {
                 waves();
             }
+            else if(styleselect==6)
+            {
+                mesh3D();
+            }
         }
-        else{
-            instructText((char *)"Paused!",-75,-100,-200);
+        else
+        {
+            instructText((char *)"Paused!",-75,-200,-200);
+            pausebutton();
         }
     }
     glutSwapBuffers();
@@ -215,7 +250,7 @@ int BinSrch(int freq)
     if(freq<=20||freq>20000)
         return -1;
     freq-=20;
-    for(i=0;i<60;i++)
+    for(i=0; i<60; i++)
     {
         if(freq>(i*333) && freq<=(i+1)*333)
             break;
@@ -224,14 +259,16 @@ int BinSrch(int freq)
     return i;
 }
 
-void loadlogo(){
+void loadlogo()
+{
     int error;
     unsigned width = 250;
     unsigned height = 250;
     const char* name = "logo.png";
-    if((error=lodepng::decode(logo,width,height,name))){
-            printf("Error %s",lodepng_error_text(error));
-            exit(0);
+    if((error=lodepng::decode(logo,width,height,name)))
+    {
+        printf("Error %s",lodepng_error_text(error));
+        exit(0);
     }
 }
 
@@ -317,28 +354,36 @@ int main(int argc, char *argv[])
             Brilliance	    6 to 20 kHz
             */
 
-            if (f<=60){
+            if (f<=60)
+            {
                 val = graph[i] = abs( (float)(log(mag[i]) * 10)/9.0);
             }
-            else if (f>60 && f<=250){
+            else if (f>60 && f<=250)
+            {
                 val = graph[i] = abs((float)(log(mag[i]) * 10)/8.0);
             }
-            else if (f>250 && f<=500){
+            else if (f>250 && f<=500)
+            {
                 val = graph[i] = abs((float)(log(mag[i]) * 10)/7.0);
             }
-            else if (f>500 && f<=2000){
+            else if (f>500 && f<=2000)
+            {
                 val = graph[i] = abs((float)(log(mag[i]) * 10)/6.0);
             }
-            else if (f>2000 && f<=4000){
+            else if (f>2000 && f<=4000)
+            {
                 val = graph[i] = abs((float)(log(mag[i]) * 10)/5.0);
             }
-            else if (f>4000 && f<=6000){
+            else if (f>4000 && f<=6000)
+            {
                 val = graph[i] = abs((float)(log(mag[i]) * 10)/4.0);
             }
-            else if (f>6000 && f<=20000){
+            else if (f>6000 && f<=20000)
+            {
                 val = graph[i] = abs((float)(log(mag[i]) * 10)/3.5);
             }
-            else{
+            else
+            {
                 val = graph[i] = abs((float)(log(mag[i]) * 10)/2.0);
             }
 
@@ -357,29 +402,30 @@ int main(int argc, char *argv[])
     //std::vector<int>::size_type sz = ampdb.size();
 
     int k=0;
-    for(int i=0;i<(SAMPLE_COUNT)/(SAMPLE_RATE*0.1);i++)
+    for(int i=0; i<(SAMPLE_COUNT)/(SAMPLE_RATE*0.1); i++)
     {
-            //cout<<i<<endl<<ampdb.size()<<endl;;
-            array <double,60> temp={0};
-            int cnt[60]={0};
-            for(int j=0;j<(SAMPLE_RATE*0.1)/2;j++)
+        //cout<<i<<endl<<ampdb.size()<<endl;;
+        array <double,60> temp= {0};
+        int cnt[60]= {0};
+        for(int j=0; j<(SAMPLE_RATE*0.1)/2; j++)
+        {
+            int index;
+            if(k>(int)ampdb.size())
             {
-                int index;
-                if(k>(int)ampdb.size()){
-                    break;
-                }
-                if((index=BinSrch(frequency[k]))!=-1)
-                {
-                    temp[index]+=ampdb[k];
-                    cnt[index]++;
-                }
-                k++;
+                break;
             }
-            for(int j=0;j<60;j++)
+            if((index=BinSrch(frequency[k]))!=-1)
             {
-                temp[j]/=cnt[j];
+                temp[index]+=ampdb[k];
+                cnt[index]++;
             }
-            avgarr.push_back(temp);
+            k++;
+        }
+        for(int j=0; j<60; j++)
+        {
+            temp[j]/=cnt[j];
+        }
+        avgarr.push_back(temp);
     }
 
     glutInit(&argc, argv);

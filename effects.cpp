@@ -11,35 +11,24 @@ void bars()
     //Translation motion along(x,y,z) axis
     d=0.7;
     glPointSize(10.0);
-    glColor3f(1,0,1);
     for(int i=0; i<60; i++)
     {
-
+        if(i<=25)
+            glColor3f((i*10)/255.0,1,0);
+        else if(i>25 && i<50)
+            glColor3f(1,((50-i)*10)/255.0,0);
+        else
+            glColor3f(1,0,(abs(50-i))*10/255.0);
         if((int)avgarr.size()<=j)
             exit(0);
         float x=-60+(i+i),y=avgarr[j][i],z=-4;
         //end of music data
         glBegin(GL_QUADS);
         //top
-        glColor3f(0,1,1);
         glVertex3f(x+d,0,z); //x,y=0,z
-        glColor3f(1,1,1);
         glVertex3f(x+d,y,z); //x,y,z
-        glColor3f(1,1,0);
         glVertex3f(x-d,y,z); //-x,y,z
-        glColor3f(0,1,0);
         glVertex3f(x-d,0,z); //-x,y=0,z
-        //bottom
-        /*
-        glColor3f(0,1,1);
-        glVertex3f(x+d,0,z); //x,y=0,z
-        glColor3f(1,1,1);
-        glVertex3f(x+d,-y,z); //x,y,z
-        glColor3f(1,1,0);
-        glVertex3f(x-d,-y,z); //-x,y,z
-        glColor3f(0,1,0);
-        glVertex3f(x-d,0,z); //-x,y=0,z
-        */
         glEnd();
     }
     j++;
@@ -147,13 +136,13 @@ void pentagon()
         //end of music data
         glColor3f((float)(rand()%10)/10,(float)(rand()%10)/10,(float)(rand()%10)/10);
         glBegin(GL_LINE_LOOP);
-            for(int c=0;c<5;c++)
-            {
-                x=r*cos(deg*(3.14/180));
-                y=r*sin(deg*(3.14/180));
-                glVertex2f(x,y);
-                deg+=72;
-            }
+        for(int c=0; c<5; c++)
+        {
+            x=r*cos(deg*(3.14/180));
+            y=r*sin(deg*(3.14/180));
+            glVertex2f(x,y);
+            deg+=72;
+        }
         glEnd();
     }
     j++;
@@ -180,11 +169,13 @@ void CubicalMesh()
         if((int)avgarr.size()<=j)
             exit(0);
         float y=avgarr[j][i];
-        if(i%10==0){
+        if(i%10==0)
+        {
             z-=(2*d);
             x=5*2*d;
         }
-        else{
+        else
+        {
             x+=(2*d);
         }
         //end of music data
@@ -270,12 +261,12 @@ void dust()
             exit(0);
         float x=0,r=avgarr[j][i],y=0,z=-4,deg=0;
         //end of music data
-        for(int c=0;c<60;c++)
+        for(int c=0; c<60; c++)
         {
             x=r*cos(deg*(3.14/180));
             y=r*sin(deg*(3.14/180));
             glBegin(GL_POINTS);
-                glVertex2f(x,y);
+            glVertex2f(x,y);
             glEnd();
             deg+=6;
         }
@@ -287,7 +278,7 @@ void dust()
 /******************* WAVES **********************/
 void waves()
 {
-        glTranslatef(0,-10,-50.0);
+    glTranslatef(0,-10,-50.0);
     //Translation motion along(x,y,z) axis
     d=2;
     glPointSize(10.0);
@@ -299,15 +290,91 @@ void waves()
         float x=-60+(i*d),y=avgarr[j][i],z=-4;
         //end of music data
         glBegin(GL_LINES);
-            //lines
-            glVertex3f(x-(d/2),0,z);
-            glVertex3f(x-(d/4),y,z);
-            glVertex3f(x-(d/4),y,z);
-            glVertex3f(x+(d/4),-y,z);
-            glVertex3f(x+(d/4),-y,z);
-            glVertex3f(x+(d/2),0,z);
+        //lines
+        glVertex3f(x-(d/2),0,z);
+        glVertex3f(x-(d/4),y,z);
+        glVertex3f(x-(d/4),y,z);
+        glVertex3f(x+(d/4),-y,z);
+        glVertex3f(x+(d/4),-y,z);
+        glVertex3f(x+(d/2),0,z);
         glEnd();
     }
     j++;
     Sleep(97);
+}
+/****************** 3D MESH **********************/
+
+void mesh3D()
+{
+    glTranslatef(0.0,0.0,-4.5);
+    glPointSize(2.0);
+    for(int i=-200; i<=200; i+=5)
+        for(int j=-100; j<=300; j+=10)
+        {
+
+            glBegin(GL_POINTS);
+            glColor3f(0.0f,1.0f,0.0f);
+            glVertex3f( i/100.0,-1.0f, j/100.0);
+            glEnd();
+        }
+    glFlush();
+}
+
+/***************** PAUSE BUTTON *******************/
+void pausebutton()
+{
+    glColor3f(0,128/255.0,128/255.0);
+    glBegin(GL_POLYGON);
+    for (int ii = 0; ii < 100; ii++)
+    {
+        float theta = 2.0f * 3.1415926f * float(ii) / float(100);//get the current angle
+        float x = 100 * cosf(theta);//calculate the x component
+        float y = 100 * sinf(theta);//calculate the y component
+        glVertex3f(x, y,-200.0);  //output vertex
+    }
+    glEnd();
+    glColor3f(1,1,1);
+    glBegin(GL_POLYGON);
+    glVertex3f(-50,-50,-200);
+    glVertex3f(-50,50,-200);
+    glVertex3f(-25,50,-200);
+    glVertex3f(-25,-50,-200);
+    glEnd();
+    glBegin(GL_POLYGON);
+    glVertex3f(25,-50,-200);
+    glVertex3f(25,50,-200);
+    glVertex3f(50,50,-200);
+    glVertex3f(50,-50,-200);
+    glEnd();
+}
+
+/**************** NAVIGATION *****************/
+void nav()
+{
+    glColor3f(128/255.0,222/255.0,234/255.0);
+    glBegin(GL_POLYGON);
+    glVertex3f(-275,-50,-200);
+    glVertex3f(-275,50,-200);
+    glVertex3f(-250,50,-200);
+    glVertex3f(-250,-50,-200);
+    glEnd();
+    glBegin(GL_POLYGON);
+    glVertex3f(275,-50,-200);
+    glVertex3f(275,50,-200);
+    glVertex3f(250,50,-200);
+    glVertex3f(250,-50,-200);
+    glEnd();
+    glColor3f(0,0,0);
+    glBegin(GL_POLYGON);
+    glVertex3f(265,0,-200);
+    glVertex3f(255,5,-200);
+    glVertex3f(255,-5,-200);
+    glEnd();
+    glBegin(GL_POLYGON);
+    glVertex3f(-265,0,-200);
+    glVertex3f(-255,5,-200);
+    glVertex3f(-255,-5,-200);
+    glEnd();
+
+
 }
