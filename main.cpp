@@ -197,16 +197,17 @@ void display(void)
         {
             glColor3f(128/255.0,222/255.0,234/255.0);
             glBegin(GL_POLYGON);
-            glVertex3f(-250,-200.0,-200.0);
             glVertex3f(-250,-190.0,-200.0);
-            glVertex3f(-250+(int)timepercent,-190.0,-200.0);
-            glVertex3f(-250+(int)timepercent,-200.0,-200);
+            glVertex3f(-250,-180.0,-200.0);
+            glVertex3f(-250+(int)timepercent,-180.0,-200.0);
+            glVertex3f(-250+(int)timepercent,-190.0,-200);
             glEnd();
+            glColor3f(1,1,244/255.0);
             glBegin(GL_LINE_LOOP);
-            glVertex3f(-252,-202.0,-200.0);
-            glVertex3f(-252,-188.0,-200.0);
-            glVertex3f(-252+500,-188.0,-200.0);
-            glVertex3f(-252+500,-202.0,-200);
+            glVertex3f(-250,-192.0,-200.0);
+            glVertex3f(-250,-178.0,-200.0);
+            glVertex3f(-250+500,-178.0,-200.0);
+            glVertex3f(-250+500,-192.0,-200);
             glEnd();
             instructText((char*)cstr,-250,-175,-200);
             nav();
