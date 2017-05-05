@@ -11,6 +11,7 @@ void bars()
     //Translation motion along(x,y,z) axis
     d=0.7;
     glPointSize(10.0);
+
     for(int i=0; i<60; i++)
     {
         if(i<=25)
@@ -169,13 +170,11 @@ void CubicalMesh()
         if((int)avgarr.size()<=j)
             exit(0);
         float y=avgarr[j][i];
-        if(i%10==0)
-        {
+        if(i%10==0){
             z-=(2*d);
             x=5*2*d;
         }
-        else
-        {
+        else{
             x+=(2*d);
         }
         //end of music data
@@ -261,12 +260,12 @@ void dust()
             exit(0);
         float x=0,r=avgarr[j][i],y=0,z=-4,deg=0;
         //end of music data
-        for(int c=0; c<60; c++)
+        for(int c=0;c<60;c++)
         {
             x=r*cos(deg*(3.14/180));
             y=r*sin(deg*(3.14/180));
             glBegin(GL_POINTS);
-            glVertex2f(x,y);
+                glVertex2f(x,y);
             glEnd();
             deg+=6;
         }
@@ -290,14 +289,51 @@ void waves()
         float x=-60+(i*d),y=avgarr[j][i],z=-4;
         //end of music data
         glBegin(GL_LINES);
-        //lines
-        glVertex3f(x-(d/2),0,z);
-        glVertex3f(x-(d/4),y,z);
-        glVertex3f(x-(d/4),y,z);
-        glVertex3f(x+(d/4),-y,z);
-        glVertex3f(x+(d/4),-y,z);
-        glVertex3f(x+(d/2),0,z);
+            //lines
+            glVertex3f(x-(d/2),0,z);
+            glVertex3f(x-(d/4),y,z);
+            glVertex3f(x-(d/4),y,z);
+            glVertex3f(x+(d/4),-y,z);
+            glVertex3f(x+(d/4),-y,z);
+            glVertex3f(x+(d/2),0,z);
         glEnd();
+    }
+    j++;
+    Sleep(97);
+}
+
+/******************* DWaves **********************/
+void DWaves()
+{
+    glTranslatef(-155,-40,-50.0);
+    //Translation motion along(x,y,z) axis
+    float deg=60.0;
+    //rotation after translation (order matters)
+    //+glRotatef(deg,1,0,0);  //(degree, x,y,z);
+    //deg+=1.5;
+    d=3;
+    glPointSize(5.0);
+    glColor3f(1,0,1);
+    int z=0,x=-5*5*d;
+    for(int i=0; i<60; i++)
+    {
+
+        if((int)avgarr.size()<=j)
+            exit(0);
+        float y=avgarr[j][i];
+        if(i%10==0){
+            z-=(5*d);
+            x=5*5*d;
+        }
+        else{
+            x+=(5*d);
+        }
+        //end of music data
+        glBegin(GL_POINTS);
+            glVertex3f(x+=2,y,z);
+        glEnd();
+        //deg+=6;
+        //deg+=5.625;
     }
     j++;
     Sleep(97);

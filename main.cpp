@@ -1,6 +1,7 @@
 #include "headers.h"
 #include "lodepng/lodepng.h"
 #include "lodepng/lodepng.cpp"
+
 using namespace std;
 
 vector<int> ampdb(0);
@@ -232,6 +233,10 @@ void display(void)
             {
                 mesh3D();
             }
+	    else if(styleselect==7)
+	    {
+		DWaves();
+	    }
         }
         else
         {
@@ -402,30 +407,29 @@ int main(int argc, char *argv[])
     //std::vector<int>::size_type sz = ampdb.size();
 
     int k=0;
-    for(int i=0; i<(SAMPLE_COUNT)/(SAMPLE_RATE*0.1); i++)
+    for(int i=0;i<(SAMPLE_COUNT)/(SAMPLE_RATE*0.1);i++)
     {
-        //cout<<i<<endl<<ampdb.size()<<endl;;
-        array <double,60> temp= {0};
-        int cnt[60]= {0};
-        for(int j=0; j<(SAMPLE_RATE*0.1)/2; j++)
-        {
-            int index;
-            if(k>(int)ampdb.size())
+            //cout<<i<<endl<<ampdb.size()<<endl;;
+            array <double,60> temp={0};
+            int cnt[60]={0};
+            for(int j=0;j<(SAMPLE_RATE*0.1)/2;j++)
             {
-                break;
+                int index;
+                if(k>(int)ampdb.size()){
+                    break;
+                }
+                if((index=BinSrch(frequency[k]))!=-1)
+                {
+                    temp[index]+=ampdb[k];
+                    cnt[index]++;
+                }
+                k++;
             }
-            if((index=BinSrch(frequency[k]))!=-1)
+            for(int j=0;j<60;j++)
             {
-                temp[index]+=ampdb[k];
-                cnt[index]++;
+                temp[j]/=cnt[j];
             }
-            k++;
-        }
-        for(int j=0; j<60; j++)
-        {
-            temp[j]/=cnt[j];
-        }
-        avgarr.push_back(temp);
+            avgarr.push_back(temp);
     }
 
     glutInit(&argc, argv);
