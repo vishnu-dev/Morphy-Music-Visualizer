@@ -46,8 +46,9 @@ void circle3d()
     //deg+=1.5;
     d=0.8;
     glPointSize(10.0);
-    glColor3f(1,0,1);
     float deg=0.0;
+    float r1=38/255.0,g1=87/255.0,b1=235/255.0;
+    float r2=countr/255.0,g2=countg/255.0,b2=countb/255.0;
     for(int i=0; i<60; i++)
     {
 
@@ -57,65 +58,97 @@ void circle3d()
         //end of music data
         glBegin(GL_QUADS);
         //top
-        glColor3f(1,1,0);
+        glColor3f(r2,g2,b2);
         glVertex3f(x-d,y,z+d); //-x,y,z
-        glColor3f(1,1,1);
         glVertex3f(x+d,y,z+d); //x,y,z
-        glColor3f(1,0,1);
         glVertex3f(x+d,y,z-d); //x,y,-z
-        glColor3f(1,0,0);
         glVertex3f(x-d,y,z-d); //-x,y,-z
 
         //bottom
-        glColor3f(0,1,0);
+        glColor3f(r1,g1,b1);
         glVertex3f(x-d,0,z+d); //-x,y=0,z
-        glColor3f(0,1,1);
+        glColor3f(r1,g1,b1);
         glVertex3f(x+d,0,z+d); //x,y=0,z
-        glColor3f(0,0,1);
+        glColor3f(r1,g1,b1);
         glVertex3f(x+d,0,z-d); //x,y=0,-z
-        glColor3f(0,1,1);
+        glColor3f(r1,g1,b1);
         glVertex3f(x-d,0,z-d); //-x,y=0,-z
 
         //left
-        glColor3f(0,1,0);
+        glColor3f(r1,g1,b1);
         glVertex3f(x-d,0,z+d); //-x,y=0,z
-        glColor3f(0,1,1);
+        glColor3f(r1,g1,b1);
         glVertex3f(x-d,0,z-d); //-x,y=0,-z
-        glColor3f(1,0,0);
+        glColor3f(r2,g2,b2);
         glVertex3f(x-d,y,z-d); //-x,y,-z
-        glColor3f(1,1,0);
+        glColor3f(r2,g2,b2);
         glVertex3f(x-d,y,z+d); //-x,y,z
 
         //right
-        glColor3f(0,1,1);
+        glColor3f(r1,g1,b1);
         glVertex3f(x+d,0,z+d); //x,y=0,z
-        glColor3f(0,0,1);
+        glColor3f(r1,g1,b1);
         glVertex3f(x+d,0,z-d); //x,y=0,-z
-        glColor3f(1,0,1);
+        glColor3f(r2,g2,b2);
         glVertex3f(x+d,y,z-d); //x,y,-z
-        glColor3f(1,1,1);
+        glColor3f(r2,g2,b2);
         glVertex3f(x+d,y,z+d); //x,y,z
 
         //front
-        glColor3f(0,1,1);
+        glColor3f(r1,g1,b1);
         glVertex3f(x+d,0,z+d); //x,y=0,z
-        glColor3f(1,1,1);
+        glColor3f(r2,g2,b2);
         glVertex3f(x+d,y,z+d); //x,y,z
-        glColor3f(1,1,0);
+        glColor3f(r2,g2,b2);
         glVertex3f(x-d,y,z+d); //-x,y,z
-        glColor3f(0,1,0);
+        glColor3f(r1,g1,b1);
         glVertex3f(x-d,0,z+d); //-x,y=0,z
 
         //back
-        glColor3f(0,0,1);
+        glColor3f(r1,g1,b1);
         glVertex3f(x+d,0,z-d); //x,y=0,z
-        glColor3f(1,0,1);
+        glColor3f(r2,g2,b2);
         glVertex3f(x+d,y,z-d); //x,y,z
-        glColor3f(1,0,0);
+        glColor3f(r2,g2,b2);
         glVertex3f(x-d,y,z-d); //-x,y,z
-        glColor3f(0,1,1);
+        glColor3f(r1,g1,b1);
         glVertex3f(x-d,0,z-d); //-x,y=0,z
         glEnd();
+
+        glBegin(GL_LINE_LOOP);
+        glColor3f(0,0,0);
+        //left
+        glVertex3f(x-d,0,z+d); //-x,y=0,z
+        glVertex3f(x-d,0,z-d); //-x,y=0,-z
+        glVertex3f(x-d,y,z-d); //-x,y,-z
+        glVertex3f(x-d,y,z+d); //-x,y,z
+
+        //back
+        glVertex3f(x+d,0,z-d); //x,y=0,z
+        glVertex3f(x+d,y,z-d); //x,y,z
+        glVertex3f(x-d,y,z-d); //-x,y,z
+        glVertex3f(x-d,0,z-d); //-x,y=0,z
+
+        //right
+        glVertex3f(x+d,0,z+d); //x,y=0,z
+        glVertex3f(x+d,0,z-d); //x,y=0,-z
+        glVertex3f(x+d,y,z-d); //x,y,-z
+        glVertex3f(x+d,y,z+d); //x,y,z
+
+        //front
+        glVertex3f(x+d,0,z+d); //x,y=0,z
+        glVertex3f(x+d,y,z+d); //x,y,z
+        glVertex3f(x-d,y,z+d); //-x,y,z
+        glVertex3f(x-d,0,z+d); //-x,y=0,z
+
+        //top
+        glVertex3f(x-d,y,z+d); //-x,y,z
+        glVertex3f(x+d,y,z+d); //x,y,z
+        glVertex3f(x+d,y,z-d); //x,y,-z
+        glVertex3f(x-d,y,z-d); //-x,y,-z
+
+        glEnd();
+
         deg+=6;
         //deg+=5.625;
     }

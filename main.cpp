@@ -23,6 +23,7 @@ double SAMPLE_RATE;
 kiss_fft_cpx in[N], out[N];
 int styleselect=0;
 int NO_STYLE=8;
+int countr=0,countg=0,countb=0;
 
 static timestamp_t
 get_timestamp ()
@@ -158,6 +159,36 @@ void processSpecialKeys(int key, int x, int y)
     case GLUT_KEY_RIGHT:
         styleselect=(styleselect+1)%NO_STYLE;
         break;
+    case GLUT_KEY_UP:
+        if(countr<255)
+            countr+=5;
+        else if(countr==255 && countg<255)
+            countg+=5;
+        else if(countr==255 && countg==255 && countb<255)
+            countb+=5;
+        break;
+    case GLUT_KEY_DOWN:
+            countr-=5;
+        break;
+    }
+}
+
+void selectmusic()
+{
+    DIR *d;
+    int i=0;
+    struct dirent *dir;
+    d = opendir(".");
+    if (d)
+    {
+        while ((dir = readdir(d)) != NULL)
+        {
+            //printf("%s\n", dir->d_name);
+            instructText(dir->d_name,-250,-200+i,-500);
+            i+=20;
+        }
+
+        closedir(d);
     }
 }
 
@@ -188,7 +219,7 @@ void display(void)
         std::ostringstream ss;
         float tottime = (int)buffer.getDuration().asSeconds();
         float curtime = (int)sound.getPlayingOffset().asSeconds();
-        float timepercent = (curtime/tottime)*500;
+        float timepercent = (curtime/tottime)*(W-100);
         ss << (int)curtime;
         const std::string tmp = "Time : " + ss.str();
         const char* cstr = tmp.c_str();
@@ -197,17 +228,17 @@ void display(void)
         {
             glColor3f(128/255.0,222/255.0,234/255.0);
             glBegin(GL_POLYGON);
-            glVertex3f(-250,-190.0,-200.0);
-            glVertex3f(-250,-180.0,-200.0);
-            glVertex3f(-250+(int)timepercent,-180.0,-200.0);
-            glVertex3f(-250+(int)timepercent,-190.0,-200);
+            glVertex3f(-W/2+50,-190.0,-300.0);
+            glVertex3f(-W/2+50,-180.0,-300.0);
+            glVertex3f(-W/2+50+(int)timepercent,-180.0,-300.0);
+            glVertex3f(-W/2+50+(int)timepercent,-190.0,-300);
             glEnd();
             glColor3f(1,1,244/255.0);
             glBegin(GL_LINE_LOOP);
-            glVertex3f(-250,-192.0,-200.0);
-            glVertex3f(-250,-178.0,-200.0);
-            glVertex3f(-250+500,-178.0,-200.0);
-            glVertex3f(-250+500,-192.0,-200);
+            glVertex3f(-W/2+50,-192.0,-300.0);
+            glVertex3f(-W/2+50,-178.0,-300.0);
+            glVertex3f(W/2-50,-178.0,-300.0);
+            glVertex3f(W/2-50,-192.0,-300);
             glEnd();
             instructText((char*)cstr,-250,-175,-200);
             nav();
@@ -247,7 +278,7 @@ void display(void)
         }
         else
         {
-            instructText((char *)"Paused!",-75,-200,-200);
+            //instructText((char *)"Paused!",-75,-200,-200);
             pausebutton();
         }
     }

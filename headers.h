@@ -14,6 +14,7 @@
 #include <GL/glut.h>
 #include <GL/glext.h>
 #include <GL/freeglut.h>
+#include <dirent.h>     // For searching current directory
 
 #ifndef M_PI
 #define M_PI 3.14159265358979324
@@ -25,6 +26,7 @@ using namespace std;
 extern std::vector<int> ampdb;
 extern std::vector<int> frequency;
 
+extern int countr,countg,countb;
 extern int j;
 extern float r;  //circle "r"
 extern float d;     //cuboid width/2
