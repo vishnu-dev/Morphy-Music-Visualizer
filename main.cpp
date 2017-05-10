@@ -358,7 +358,7 @@ int main(int argc, char *argv[])
     {
         for ( i = framePointer, j = 0; i < (framePointer + N) && framePointer < roof - N ; i++, j++  )
         {
-            //Apply window function on the sample
+            //Apply Hanning window function on the sample
             double multiplier = 0.5 * (1 - cos(2 * M_PI * j / (N - 1)));
             in[j].r = multiplier * data[i];
             in[j].i = 0;  //stores N samples
@@ -377,6 +377,7 @@ int main(int argc, char *argv[])
         }
 
         //std::cout<<"Framepointer = "<<framePointer<<std::endl;
+        // get fft values from kissfft
         getFft(in, out);
 
         // calculate magnitude of first n/2 FFT
@@ -444,6 +445,7 @@ int main(int argc, char *argv[])
     std::cout<<"actual no of samples: "<<ampdb.size();
     //std::vector<int>::size_type sz = ampdb.size();
 
+    //frequency mapping of amplitudes
     int k=0;
     for(int i=0;i<(SAMPLE_COUNT)/(SAMPLE_RATE*0.1);i++)
     {
