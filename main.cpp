@@ -11,6 +11,7 @@ vector<unsigned char> logo;
 //SFML global declarations for seeking play time
 sf::SoundBuffer buffer;
 sf::Sound sound(buffer);
+
 int flag=0,temp=0;
 int W,H;
 typedef unsigned long long timestamp_t;
@@ -22,8 +23,10 @@ double SAMPLE_COUNT;
 double SAMPLE_RATE;
 kiss_fft_cpx in[N], out[N];
 int styleselect=0;
-int NO_STYLE=8;
+int NO_STYLE=5;
 int countr=0,countg=0,countb=0;
+float curtime;
+int sync=0;
 
 static timestamp_t
 get_timestamp ()
@@ -61,14 +64,15 @@ void print_vec(const std::vector<int> vec)
 
 void reshape(int w, int h)
 {
-    W=w;
-    H=h;
+//    W=w;
+//    H=h;
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(90,(float)w/(float)h, 1, 1000);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity() ;
+//    glutReshapeWindow(W,H);
 }
 
 void drawStrokeText(char*str,int x,int y,int z)
@@ -119,7 +123,7 @@ void init()
 void processKeys(unsigned char key, int x, int y)
 {
 
-    if (key == 27) // escape key
+    if (key == 27 || key=='q'|| key=='Q') // escape key
         exit(0);
     else if(key == 32) // spacebar key
     {
@@ -168,11 +172,21 @@ void processSpecialKeys(int key, int x, int y)
             countb+=5;
         break;
     case GLUT_KEY_DOWN:
+        if(countr>0)
             countr-=5;
+        else if(countr==0 && countg>0)
+            countg-=5;
+        else if(countr==0 && countg==0 && countb>0)
+            countb-=5;
+        break;
+    case GLUT_KEY_F11:
+        glutFullScreenToggle();
         break;
     }
 }
 
+//list all files in current directory
+/*
 void selectmusic()
 {
     DIR *d;
@@ -191,7 +205,7 @@ void selectmusic()
         closedir(d);
     }
 }
-
+*/
 void idle()
 {
     glutPostRedisplay();
@@ -199,7 +213,7 @@ void idle()
 
 void display(void)
 {
-        //sets color buffer bit
+    //sets color buffer bit
     glClearColor(28/255.0,49/255.0,58/255.0,0.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  //clears display with buffer color & depth values set in init()
     //circle
@@ -218,9 +232,9 @@ void display(void)
     {
         std::ostringstream ss;
         float tottime = (int)buffer.getDuration().asSeconds();
-        float curtime = (int)sound.getPlayingOffset().asSeconds();
-        float timepercent = (curtime/tottime)*(W-100);
-        ss << (int)curtime;
+        curtime = (int)sound.getPlayingOffset().asMilliseconds();
+        float timepercent = ((curtime/1000)/tottime)*758;
+        ss << (int)(curtime/1000);
         const std::string tmp = "Time : " + ss.str();
         const char* cstr = tmp.c_str();
         glClearColor(0,0,0,0);
@@ -228,53 +242,57 @@ void display(void)
         {
             glColor3f(128/255.0,222/255.0,234/255.0);
             glBegin(GL_POLYGON);
-            glVertex3f(-W/2+50,-190.0,-300.0);
-            glVertex3f(-W/2+50,-180.0,-300.0);
-            glVertex3f(-W/2+50+(int)timepercent,-180.0,-300.0);
-            glVertex3f(-W/2+50+(int)timepercent,-190.0,-300);
+            glVertex3f(-380,-290,-300.0);
+            glVertex3f(-380,-280,-300.0);
+            glVertex3f(-380+(int)timepercent,-280,-300.0);
+            glVertex3f(-380+(int)timepercent,-290,-300.0);
             glEnd();
+
             glColor3f(1,1,244/255.0);
             glBegin(GL_LINE_LOOP);
-            glVertex3f(-W/2+50,-192.0,-300.0);
-            glVertex3f(-W/2+50,-178.0,-300.0);
-            glVertex3f(W/2-50,-178.0,-300.0);
-            glVertex3f(W/2-50,-192.0,-300);
+            glVertex3f(-380,-292.0,-300.0);
+            glVertex3f(-380,-278.0,-300.0);
+            glVertex3f(380,-278.0,-300.0);
+            glVertex3f(380,-292.0,-300.0);
             glEnd();
+
+
             instructText((char*)cstr,-250,-175,-200);
             nav();
+
             //instructText((char*)cstr,-250,-175,-200);
             if(styleselect==0)
             {
-                circle3d();
+                bars();
             }
             else if(styleselect==1)
             {
-                bars();
+                circle3d();
             }
             else if(styleselect==2)
             {
-                pentagon();
+                dust();
             }
             else if(styleselect==3)
             {
-                dust();
+                pentagon();
             }
             else if(styleselect==4)
             {
-                CubicalMesh();
-            }
-            else if(styleselect==5)
-            {
                 waves();
             }
-            else if(styleselect==6)
-            {
-                mesh3D();
-            }
-            else if(styleselect==7)
-            {
-            DWaves();
-            }
+//            else if(styleselect==4)
+//            {
+//                CubicalMesh();
+//            }
+//            else if(styleselect==6)
+//            {
+//                DWaves();
+//            }
+//            else if(styleselect==6)
+//            {
+//                mesh3D();
+//            }
         }
         else
         {
@@ -473,6 +491,9 @@ int main(int argc, char *argv[])
     }
 
     glutInit(&argc, argv);
+    W=glutGet(GLUT_SCREEN_WIDTH);
+    H=glutGet(GLUT_SCREEN_HEIGHT);
+
     glutSetOption(GLUT_MULTISAMPLE, 8);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH|GL_MULTISAMPLE);
     glutInitWindowSize(800,600);
@@ -486,6 +507,7 @@ int main(int argc, char *argv[])
     init();
     glutDisplayFunc(display);
     glutIdleFunc(idle);
+    glutFullScreen();
     glutReshapeFunc(reshape);
     glutMainLoop();
 

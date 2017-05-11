@@ -1,13 +1,12 @@
 #include "headers.h"
 
 using namespace std;
-
 vector< array<double,60> > avgarr(0); //for average value
 
 /******************* BARS **********************/
 void bars()
 {
-    glTranslatef(0,-10,-50.0);
+    glTranslatef(0,-13,-50.0);
     //Translation motion along(x,y,z) axis
     d=0.7;
     glPointSize(10.0);
@@ -39,7 +38,7 @@ void bars()
 /******************* CIRCLE3D **********************/
 void circle3d()
 {
-    glTranslatef(0,-10,-50.0);
+    glTranslatef(0,-5,-50.0);
     //Translation motion along(x,y,z) axis
     //rotation after translation (order matters)
     glRotatef(deg,1,0,0);  //(degree, x,y,z);
@@ -49,13 +48,14 @@ void circle3d()
     float deg=0.0;
     float r1=38/255.0,g1=87/255.0,b1=235/255.0;
     float r2=countr/255.0,g2=countg/255.0,b2=countb/255.0;
+
     for(int i=0; i<60; i++)
     {
-
-        if((int)avgarr.size()<=j)
+        if((int)avgarr.size()-2 <=j)
             exit(0);
         float x=r*cos(deg*(3.14/180)),y=avgarr[j][i],z=r*sin(deg*(3.14/180));
         //end of music data
+        {
         glBegin(GL_QUADS);
         //top
         glColor3f(r2,g2,b2);
@@ -114,9 +114,12 @@ void circle3d()
         glColor3f(r1,g1,b1);
         glVertex3f(x-d,0,z-d); //-x,y=0,z
         glEnd();
+        }
+
+        {
 
         glBegin(GL_LINE_LOOP);
-        glColor3f(0,0,0);
+        glColor3f(1,1,1);
         //left
         glVertex3f(x-d,0,z+d); //-x,y=0,z
         glVertex3f(x-d,0,z-d); //-x,y=0,-z
@@ -149,22 +152,39 @@ void circle3d()
 
         glEnd();
 
+        }
         deg+=6;
         //deg+=5.625;
     }
-    j++;
-    Sleep(97);
+
+//    sync3
+    if( curtime > (j*100+100))
+    {
+        j++;
+        //cout<<"arr_sz: "<<(int)avgarr.size()<<" j:"<<j<<" cur time:"<<curtime<<endl;
+        //sync++;
+    }
+
+//    sync1
+//        while((int)sound.getPlayingOffset().asSeconds()<(i*100+100)){
+//            Sleep(1);
+//     }
+
+//    sync2
+//    Sleep(97);
+//    j++;
+//    cout<<"arr_sz: "<<(int)avgarr.size()<<" j:"<<j<<endl;
 }
 /******************* PENTAGON **********************/
 void pentagon()
 {
-    glTranslatef(0,-10,-50.0);
+    glTranslatef(0,0,-50.0);
     //Translation motion along(x,y,z) axis
     d=0.7;
     glPointSize(2.0);
     for(int i=0; i<60; i++)
     {
-        if((int)avgarr.size()<=j)
+        if((int)avgarr.size()-2<=j)
             exit(0);
         float x=0,r=avgarr[j][i],y=0,z=-4,deg=0;
         //end of music data
@@ -179,12 +199,19 @@ void pentagon()
         }
         glEnd();
     }
-    j++;
-    Sleep(97);
+    if( curtime > (j*100+100))
+    {
+        j++;
+        //cout<<"arr_sz: "<<(int)avgarr.size()<<" j:"<<j<<" cur time:"<<curtime<<endl;
+        //sync++;
+    }
+//    j++;
+//    Sleep(97);
 }
 
 
 /******************* CUBICAL_MESH **********************/
+/*
 void CubicalMesh()
 {
     glTranslatef(-80,0,-50.0);
@@ -200,7 +227,7 @@ void CubicalMesh()
     for(int i=0; i<60; i++)
     {
 
-        if((int)avgarr.size()<=j)
+        if((int)avgarr.size()-2<=j)
             exit(0);
         float y=avgarr[j][i];
         if(i%10==0){
@@ -275,21 +302,25 @@ void CubicalMesh()
         //deg+=6;
         //deg+=5.625;
     }
-    j++;
-    Sleep(97);
+    if( curtime > (j*100+100))
+    {
+        j++;
+        //cout<<"arr_sz: "<<(int)avgarr.size()<<" j:"<<j<<" cur time:"<<curtime<<endl;
+        //sync++;
+    }
 }
-
+*/
 /******************* DUST **********************/
 void dust()
 {
-    glTranslatef(0,-10,-50.0);
+    glTranslatef(0,0,-50.0);
     //Translation motion along(x,y,z) axis
     d=0.7;
     glPointSize(2.0);
-    glColor3f(1,0,1);
+    glColor3ub(0x43,0xA0,0x47);
     for(int i=0; i<60; i++)
     {
-        if((int)avgarr.size()<=j)
+        if((int)avgarr.size()-2<=j)
             exit(0);
         float x=0,r=avgarr[j][i],y=0,z=-4,deg=0;
         //end of music data
@@ -303,21 +334,21 @@ void dust()
             deg+=6;
         }
     }
-    j++;
-    Sleep(97);
+    if( curtime > (j*100+100))
+        j++;
 }
 
 /******************* WAVES **********************/
 void waves()
 {
-    glTranslatef(0,-10,-50.0);
+    glTranslatef(0,0,-50.0);
     //Translation motion along(x,y,z) axis
     d=2;
     glPointSize(10.0);
-    glColor3f(1,0,1);
+    glColor3ub(0xf9,0x26,0x72);
     for(int i=0; i<60; i++)
     {
-        if((int)avgarr.size()<=j)
+        if((int)avgarr.size()-2<=j)
             exit(0);
         float x=-60+(i*d),y=avgarr[j][i],z=-4;
         //end of music data
@@ -331,11 +362,18 @@ void waves()
             glVertex3f(x+(d/2),0,z);
         glEnd();
     }
-    j++;
-    Sleep(97);
+    if( curtime > (j*100+100))
+    {
+        j++;
+        //cout<<"arr_sz: "<<(int)avgarr.size()<<" j:"<<j<<" cur time:"<<curtime<<endl;
+        //sync++;
+    }
+//    j++;
+//    Sleep(97);
 }
 
 /******************* DWaves **********************/
+/*
 void DWaves()
 {
     glTranslatef(-155,-40,-50.0);
@@ -351,7 +389,7 @@ void DWaves()
     for(int i=0; i<60; i++)
     {
 
-        if((int)avgarr.size()<=j)
+        if((int)avgarr.size()-2<=j)
             exit(0);
         float y=avgarr[j][i];
         if(i%10==0){
@@ -368,26 +406,33 @@ void DWaves()
         //deg+=6;
         //deg+=5.625;
     }
-    j++;
-    Sleep(97);
+    if( curtime > (j*100+100))
+    {
+        j++;
+        //cout<<"arr_sz: "<<(int)avgarr.size()<<" j:"<<j<<" cur time:"<<curtime<<endl;
+        //sync++;
+    }
+//    j++;
+//    Sleep(97);
 }
+*/
 /****************** 3D MESH **********************/
 
-void mesh3D()
-{
-    glTranslatef(0.0,0.0,-4.5);
-    glPointSize(2.0);
-    for(int i=-200; i<=200; i+=5)
-        for(int j=-100; j<=300; j+=10)
-        {
-
-            glBegin(GL_POINTS);
-            glColor3f(0.0f,1.0f,0.0f);
-            glVertex3f( i/100.0,-1.0f, j/100.0);
-            glEnd();
-        }
-    glFlush();
-}
+//void mesh3D()
+//{
+//    glTranslatef(0.0,0.0,-4.5);
+//    glPointSize(2.0);
+//    for(int i=-200; i<=200; i+=5)
+//        for(int j=-100; j<=300; j+=10)
+//        {
+//
+//            glBegin(GL_POINTS);
+//            glColor3f(0.0f,1.0f,0.0f);
+//            glVertex3f( i/100.0,-1.0f, j/100.0);
+//            glEnd();
+//        }
+//    glFlush();
+//}
 
 /***************** PAUSE BUTTON *******************/
 void pausebutton()

@@ -34,16 +34,17 @@ extern float deg;
 extern vector< array<double,60> > avgarr; //for average value
 extern double SAMPLE_COUNT;
 extern double SAMPLE_RATE;
-
+extern float curtime;
+extern int sync;
 extern kiss_fft_cpx in[N], out[N];
 
 void circle3d();
 void bars();
 void dust();
 void pentagon();
-void CubicalMesh();
+//void CubicalMesh();
 void waves();
-void mesh3D();
+//void mesh3D();
+//void DWaves();
 void pausebutton();
 void nav();
-void DWaves();
