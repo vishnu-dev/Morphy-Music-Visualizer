@@ -7,4 +7,6 @@
 *.wav
 *.MP3
 *.dll
+*.txt
+*.pptx
 bin/

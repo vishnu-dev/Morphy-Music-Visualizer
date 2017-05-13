@@ -346,12 +346,12 @@ int main(int argc, char *argv[])
         return 0;
     //sound.play(); called just before display
 
-    std::cout<<"SampleRate:"<<(SAMPLE_RATE= buffer.getSampleRate())<< std::endl;
-    std::cout<<"SampleCount:"<<(SAMPLE_COUNT= buffer.getSampleCount())<< std::endl;
+    std::cout<<"SampleRate: "<<(SAMPLE_RATE= buffer.getSampleRate())<< std::endl;
+    std::cout<<"SampleCount: "<<(SAMPLE_COUNT= buffer.getSampleCount())<< std::endl;
     std::cout<<"SampleCount/2: "<<buffer.getSampleCount()/2<< std::endl;
-    std::cout<<"expected no of samples:"<<(((int)(buffer.getSampleCount()/N))*N)/2<<std::endl;
-    std::cout<<"channel:"<<buffer.getChannelCount()<<std::endl;
-    std::cout << " " << buffer.getDuration().asSeconds() << " seconds"<< std::endl;
+    std::cout<<"expected no of samples: "<<(((int)(buffer.getSampleCount()/N))*N)/2<<std::endl;
+    std::cout<<"channel: "<<buffer.getChannelCount()<<std::endl;
+    std::cout <<"Duration: "<< buffer.getDuration().asSeconds() << " seconds"<< std::endl;
 
     std::vector<int>::iterator it;
     std::vector<int>::iterator f_it;
