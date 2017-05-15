@@ -35,7 +35,6 @@ extern vector< array<double,60> > avgarr; //for average value
 extern double SAMPLE_COUNT;
 extern double SAMPLE_RATE;
 extern float curtime;
-extern int sync;
 extern kiss_fft_cpx in[N], out[N];
 
 void circle3d();

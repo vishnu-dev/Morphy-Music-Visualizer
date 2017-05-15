@@ -19,7 +19,7 @@ void bars()
             glColor3f(1,((50-i)*10)/255.0,0);
         else
             glColor3f(1,0,(abs(50-i))*10/255.0);
-        if((int)avgarr.size()<=j)
+        if((int)avgarr.size()-2<=j)
             exit(0);
         float x=-60+(i+i),y=avgarr[j][i],z=-4;
         //end of music data
@@ -31,8 +31,13 @@ void bars()
         glVertex3f(x-d,0,z); //-x,y=0,z
         glEnd();
     }
-    j++;
-    Sleep(97);
+    //sync3
+    if( curtime > (j*100+100))
+    {
+        j++;
+        //cout<<"arr_sz: "<<(int)avgarr.size()<<" j:"<<j<<" cur time:"<<curtime<<endl;
+        //sync++;
+    }
 }
 
 /******************* CIRCLE3D **********************/
@@ -157,24 +162,14 @@ void circle3d()
         //deg+=5.625;
     }
 
-//    sync3
+    //sync3
     if( curtime > (j*100+100))
     {
         j++;
         //cout<<"arr_sz: "<<(int)avgarr.size()<<" j:"<<j<<" cur time:"<<curtime<<endl;
-        //sync++;
     }
-
-//    sync1
-//        while((int)sound.getPlayingOffset().asSeconds()<(i*100+100)){
-//            Sleep(1);
-//     }
-
-//    sync2
-//    Sleep(97);
-//    j++;
-//    cout<<"arr_sz: "<<(int)avgarr.size()<<" j:"<<j<<endl;
 }
+
 /******************* PENTAGON **********************/
 void pentagon()
 {
@@ -203,12 +198,8 @@ void pentagon()
     {
         j++;
         //cout<<"arr_sz: "<<(int)avgarr.size()<<" j:"<<j<<" cur time:"<<curtime<<endl;
-        //sync++;
     }
-//    j++;
-//    Sleep(97);
 }
-
 
 /******************* CUBICAL_MESH **********************/
 /*
@@ -366,10 +357,7 @@ void waves()
     {
         j++;
         //cout<<"arr_sz: "<<(int)avgarr.size()<<" j:"<<j<<" cur time:"<<curtime<<endl;
-        //sync++;
     }
-//    j++;
-//    Sleep(97);
 }
 
 /******************* DWaves **********************/

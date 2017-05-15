@@ -26,7 +26,6 @@ int styleselect=0;
 int NO_STYLE=5;
 int countr=0,countg=0,countb=0;
 float curtime;
-int sync=0;
 
 static timestamp_t
 get_timestamp ()
@@ -180,7 +179,8 @@ void processSpecialKeys(int key, int x, int y)
             countb-=5;
         break;
     case GLUT_KEY_F11:
-        glutFullScreenToggle();
+        glutFullScreen();
+        //glutFullScreenToggle();
         break;
     }
 }
@@ -231,10 +231,11 @@ void display(void)
     else
     {
         std::ostringstream ss;
-        float tottime = (int)buffer.getDuration().asSeconds();
-        curtime = (int)sound.getPlayingOffset().asMilliseconds();
-        float timepercent = ((curtime/1000)/tottime)*758;
-        ss << (int)(curtime/1000);
+        float tottime = buffer.getDuration().asSeconds();
+        float cursor = sound.getPlayingOffset().asSeconds();
+        curtime = sound.getPlayingOffset().asMilliseconds();
+        float timepercent = (cursor/tottime)*760;
+        ss << (int)cursor;
         const std::string tmp = "Time : " + ss.str();
         const char* cstr = tmp.c_str();
         glClearColor(0,0,0,0);
