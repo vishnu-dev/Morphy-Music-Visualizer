@@ -31,6 +31,10 @@ void bars()
         glVertex3f(x-d,0,z); //-x,y=0,z
         glEnd();
     }
+    //sync
+    //j++;
+    //Sleep(97);
+
     //sync3
     if( curtime > (j*100+100))
     {
@@ -123,38 +127,45 @@ void circle3d()
 
         {
 
-        glBegin(GL_LINE_LOOP);
         glColor3f(1,1,1);
+        glBegin(GL_LINE_LOOP);
         //left
         glVertex3f(x-d,0,z+d); //-x,y=0,z
         glVertex3f(x-d,0,z-d); //-x,y=0,-z
         glVertex3f(x-d,y,z-d); //-x,y,-z
         glVertex3f(x-d,y,z+d); //-x,y,z
+        glEnd();
 
         //back
+        glBegin(GL_LINE_LOOP);
         glVertex3f(x+d,0,z-d); //x,y=0,z
         glVertex3f(x+d,y,z-d); //x,y,z
         glVertex3f(x-d,y,z-d); //-x,y,z
         glVertex3f(x-d,0,z-d); //-x,y=0,z
+        glEnd();
 
         //right
+        glBegin(GL_LINE_LOOP);
         glVertex3f(x+d,0,z+d); //x,y=0,z
         glVertex3f(x+d,0,z-d); //x,y=0,-z
         glVertex3f(x+d,y,z-d); //x,y,-z
         glVertex3f(x+d,y,z+d); //x,y,z
+        glEnd();
 
         //front
+        glBegin(GL_LINE_LOOP);
         glVertex3f(x+d,0,z+d); //x,y=0,z
         glVertex3f(x+d,y,z+d); //x,y,z
         glVertex3f(x-d,y,z+d); //-x,y,z
         glVertex3f(x-d,0,z+d); //-x,y=0,z
+        glEnd();
 
         //top
+        glBegin(GL_LINE_LOOP);
         glVertex3f(x-d,y,z+d); //-x,y,z
         glVertex3f(x+d,y,z+d); //x,y,z
         glVertex3f(x+d,y,z-d); //x,y,-z
         glVertex3f(x-d,y,z-d); //-x,y,-z
-
         glEnd();
 
         }
@@ -189,7 +200,7 @@ void pentagon()
         {
             x=r*cos(deg*(3.14/180));
             y=r*sin(deg*(3.14/180));
-            glVertex2f(x,y);
+            glVertex3f(x,y,z);
             deg+=72;
         }
         glEnd();
@@ -320,7 +331,7 @@ void dust()
             x=r*cos(deg*(3.14/180));
             y=r*sin(deg*(3.14/180));
             glBegin(GL_POINTS);
-                glVertex2f(x,y);
+                glVertex3f(x,y,z);
             glEnd();
             deg+=6;
         }

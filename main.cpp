@@ -137,6 +137,12 @@ void processKeys(unsigned char key, int x, int y)
             sound.pause();
             temp--;
         }
+        if(flag==0)
+        {
+            flag=1;
+            temp=1;
+            sound.play();
+        }
     }
     else if(key == 77 || key==109)
     {
@@ -179,8 +185,8 @@ void processSpecialKeys(int key, int x, int y)
             countb-=5;
         break;
     case GLUT_KEY_F11:
-        glutFullScreen();
-        //glutFullScreenToggle();
+        //glutFullScreen();
+        glutFullScreenToggle();
         break;
     }
 }
@@ -234,6 +240,7 @@ void display(void)
         float tottime = buffer.getDuration().asSeconds();
         float cursor = sound.getPlayingOffset().asSeconds();
         curtime = sound.getPlayingOffset().asMilliseconds();
+        //cout<<curtime<<endl;
         float timepercent = (cursor/tottime)*760;
         ss << (int)cursor;
         const std::string tmp = "Time : " + ss.str();
@@ -317,7 +324,6 @@ int BinSrch(int freq)
         if(freq>(i*333) && freq<=(i+1)*333)
             break;
     }
-
     return i;
 }
 
@@ -336,7 +342,8 @@ void loadlogo()
 
 int main(int argc, char *argv[])
 {
-    loadlogo();    //SFML usage error
+    loadlogo();
+    //SFML usage error
     if (argc < 2)
     {
         std::cout << "Usage: wave_iteration <FILENAME>" << std::endl;
@@ -346,7 +353,6 @@ int main(int argc, char *argv[])
     if (!buffer.loadFromFile(argv[1]))
         return 0;
     //sound.play(); called just before display
-
     std::cout<<"SampleRate: "<<(SAMPLE_RATE= buffer.getSampleRate())<< std::endl;
     std::cout<<"SampleCount: "<<(SAMPLE_COUNT= buffer.getSampleCount())<< std::endl;
     std::cout<<"SampleCount/2: "<<buffer.getSampleCount()/2<< std::endl;
@@ -405,7 +411,7 @@ int main(int argc, char *argv[])
             int val,f;
             mag[i] = sqrt((out[i].r * out[i].r) + (out[i].i * out[i].i));
             f = (i*sf)/N;
-
+            //cout<<"amp: "<<mag[i]<<" f: "<<f<<endl;
             /*
             Frequency_Range	Frequency_Values
             Sub-bass	    20 to 60 Hz
@@ -489,6 +495,12 @@ int main(int argc, char *argv[])
                 temp[j]/=cnt[j];
             }
             avgarr.push_back(temp);
+            /*
+            //print display data
+            for(int ppp=0;ppp<60;ppp++)
+                cout<<temp[ppp]<<" ";
+            cout<<endl;
+            */
     }
 
     glutInit(&argc, argv);

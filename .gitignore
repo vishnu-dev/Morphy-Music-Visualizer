@@ -9,4 +9,6 @@
 *.dll
 *.txt
 *.pptx
+*.docx
 bin/
+temp/
