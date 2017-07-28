@@ -1,9 +1,9 @@
 # Morphy
 
-![Home Page](/screenshots/home.png)
+![Home Page](/assets/bars.gif)
 
-![Home Page](/screenshots/pat2.png)
+![Home Page](/assets/circle3d-1.gif)
 
-![Home Page](/screenshots/pat1.png)
+![Home Page](/assets/color-pentagon.gif)
 
-![Home Page](/screenshots/pat3.png)
+![Home Page](/assets/particle-circle.gif)
