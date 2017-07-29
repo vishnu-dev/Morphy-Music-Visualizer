@@ -32,15 +32,9 @@ void bars()
         glEnd();
     }
     //sync
-    //j++;
-    //Sleep(97);
-
-    //sync3
     if( curtime > (j*100+100))
     {
         j++;
-        //cout<<"arr_sz: "<<(int)avgarr.size()<<" j:"<<j<<" cur time:"<<curtime<<endl;
-        //sync++;
     }
 }
 
@@ -171,14 +165,12 @@ void circle3d()
 
         }
         deg+=6;
-        //deg+=5.625;
     }
 
-    //sync3
+    //sync
     if( curtime > (j*100+100))
     {
         j++;
-        //cout<<"arr_sz: "<<(int)avgarr.size()<<" j:"<<j<<" cur time:"<<curtime<<endl;
     }
 }
 
@@ -209,7 +201,6 @@ void pentagon()
     if( curtime > (j*100+100))
     {
         j++;
-        //cout<<"arr_sz: "<<(int)avgarr.size()<<" j:"<<j<<" cur time:"<<curtime<<endl;
     }
 }
 
@@ -368,7 +359,6 @@ void waves()
     if( curtime > (j*100+100))
     {
         j++;
-        //cout<<"arr_sz: "<<(int)avgarr.size()<<" j:"<<j<<" cur time:"<<curtime<<endl;
     }
 }
 

@@ -15,7 +15,6 @@ sf::Sound sound(buffer);
 pthread_t threads[1]; //for multi threading
 int rc1;
 int flag=0,temp=0,loading=0,timerFlag=0;
-int W,H;
 typedef unsigned long long timestamp_t;
 int j=0;
 float r=23.0;  //circle "r"
@@ -57,15 +56,12 @@ void getFft(const kiss_fft_cpx in[N], kiss_fft_cpx out[N])
 
 void reshape(int w, int h)
 {
-//    W=w;
-//    H=h;
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluPerspective(90,(float)w/(float)h, 1, 1000);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity() ;
-//    glutReshapeWindow(W,H);
 }
 
 void drawStrokeText(char*str,int x,int y,int z)
@@ -242,7 +238,6 @@ int BinSrch(int freq)
 
 void loadData(){
 	loadlogo();
-
     if (!buffer.loadFromFile(fName.c_str()))
         exit(0);
     //sound.play(); called just before display
@@ -260,7 +255,6 @@ void loadData(){
     timestamp_t t0 = get_timestamp();
 
     int i;
-    int graph[N / 2];
     double mag[N / 2];
     double sf = buffer.getSampleRate();
     double roof = buffer.getSampleCount();
@@ -289,12 +283,10 @@ void loadData(){
         {
             timestamp_t t1 = get_timestamp();
             double secs = (t1 - t0) / 1000000.0L;
-            // print_vec(ampdb);
             std::cout << "Total exec time: " << secs << std::endl;
             break;
         }
 
-        //std::cout<<"Framepointer = "<<framePointer<<std::endl;
         // get fft values from kissfft
         getFft(in, out);
 
@@ -304,7 +296,6 @@ void loadData(){
             int val,f;
             mag[i] = sqrt((out[i].r * out[i].r) + (out[i].i * out[i].i));
             f = (i*sf)/N;
-            //cout<<"amp: "<<mag[i]<<" f: "<<f<<endl;
             /*
             Frequency_Range	Frequency_Values
             Sub-bass	    20 to 60 Hz
@@ -318,56 +309,51 @@ void loadData(){
 
             if (f<=60)
             {
-                val = graph[i] = abs( (float)(log(mag[i]) * 10)/9.0);
+                val = abs( (float)(log(mag[i]) * 10)/9.0);
             }
             else if (f>60 && f<=250)
             {
-                val = graph[i] = abs((float)(log(mag[i]) * 10)/8.0);
+                val = abs((float)(log(mag[i]) * 10)/8.0);
             }
             else if (f>250 && f<=500)
             {
-                val = graph[i] = abs((float)(log(mag[i]) * 10)/7.0);
+                val = abs((float)(log(mag[i]) * 10)/7.0);
             }
             else if (f>500 && f<=2000)
             {
-                val = graph[i] = abs((float)(log(mag[i]) * 10)/6.0);
+                val = abs((float)(log(mag[i]) * 10)/6.0);
             }
             else if (f>2000 && f<=4000)
             {
-                val = graph[i] = abs((float)(log(mag[i]) * 10)/5.0);
+                val = abs((float)(log(mag[i]) * 10)/5.0);
             }
             else if (f>4000 && f<=6000)
             {
-                val = graph[i] = abs((float)(log(mag[i]) * 10)/4.0);
+                val = abs((float)(log(mag[i]) * 10)/4.0);
             }
             else if (f>6000 && f<=20000)
             {
-                val = graph[i] = abs((float)(log(mag[i]) * 10)/3.5);
+                val = abs((float)(log(mag[i]) * 10)/3.5);
             }
             else
             {
-                val = graph[i] = abs((float)(log(mag[i]) * 10)/2.0);
+                val = abs((float)(log(mag[i]) * 10)/2.0);
             }
 
-            //std::cout<<"amp: "<<val<<" freq: "<<f<<std::endl;
             it = ampdb.end();
             f_it = frequency.end();
             it = ampdb.insert(it, val);
             f_it = frequency.insert(f_it,f);
-            //std::cout<<"f["<<i<<"]= "<<frequency[i]<<std::endl;
         }
 
     }
-    //std::cout<<array[3]<<std::endl;;
-    //print_vec(array);
+
     std::cout<<"actual no of samples: "<<ampdb.size();
-    //std::vector<int>::size_type sz = ampdb.size();
 
     //frequency mapping of amplitudes
     int k=0;
     for(int i=0;i<(SAMPLE_COUNT)/(SAMPLE_RATE*0.1);i++)
     {
-            //cout<<i<<endl<<ampdb.size()<<endl;;
             array <double,60> temp={0};
             int cnt[60]={0};
             for(int j=0;j<(SAMPLE_RATE*0.1)/2;j++)
@@ -388,22 +374,16 @@ void loadData(){
                 temp[j]/=cnt[j];
             }
             avgarr.push_back(temp);
-            /*
-            //print display data
-            for(int ppp=0;ppp<60;ppp++)
-                cout<<temp[ppp]<<" ";
-            cout<<endl;
-            */
     }
 }
 
-void *callLoadData(void *thread)
+void* callLoadData(void *thread)
 {
 	loadData();
 	loading=1;
 	glutKeyboardFunc(processKeys);
     glutSpecialFunc(processSpecialKeys);
-    pthread_exit(NULL);
+    return (void*)NULL;
 }
 
 void loadingScreen()
@@ -431,11 +411,10 @@ void display(void)
 {
     //sets color buffer bit
     glClearColor(28/255.0,49/255.0,58/255.0,0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  //clears display with buffer color & depth values set in init()
-    //circle
-    glLoadIdentity();  //Loads identity matrix for each iteration of display
-    //circle3d();
-    glColor3f(0,1,0);
+    //clears display with buffer color & depth values set in init()
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //Loads identity matrix for each iteration of display
+    glLoadIdentity();
     if(loading==0){
     	loadingScreen();
     	if(timerFlag++==0){
@@ -491,7 +470,6 @@ void display(void)
             instructText((char*)cstr,-250,-175,-200);
             nav();
 
-            //instructText((char*)cstr,-250,-175,-200);
             if(styleselect==0)
             {
                 bars();
@@ -527,13 +505,10 @@ void display(void)
         }
         else
         {
-            //instructText((char *)"Paused!",-75,-200,-200);
             pausebutton();
         }
     }
     glutSwapBuffers();
-    //if(sound.getPlayingOffset().asSeconds()==buffer.getDuration().asSeconds())
-    //    exit(0);
 }
 
 int main(int argc, char *argv[])
@@ -548,9 +523,6 @@ int main(int argc, char *argv[])
     fName=argv[1];
 
     glutInit(&argc, argv);
-    W=glutGet(GLUT_SCREEN_WIDTH);
-    H=glutGet(GLUT_SCREEN_HEIGHT);
-
     glutSetOption(GLUT_MULTISAMPLE, 8);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH|GL_MULTISAMPLE);
     glutInitWindowSize(800,600);
@@ -559,15 +531,13 @@ int main(int argc, char *argv[])
     glutKeyboardFunc( processKeys );
     glutSpecialFunc( processSpecialKeys );
 
-    //st=time(NULL);
-
     init();
     glutDisplayFunc(display);
     glutIdleFunc(idle);
     glutFullScreen();
     glutReshapeFunc(reshape);
+    glutSetKeyRepeat(GLUT_KEY_REPEAT_OFF);
     glutMainLoop();
-
     return 0;
 
 }
