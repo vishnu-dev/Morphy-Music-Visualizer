@@ -47,10 +47,11 @@ void bars()
 /******************* CIRCLE3D **********************/
 void circle3d()
 {
-    glTranslatef(0,-5,-50.0);
+    glTranslatef(0,-10,-56.0);
     //Translation motion along(x,y,z) axis
     //rotation after translation (order matters)
     glRotatef(deg,1,0,0);  //(degree, x,y,z);
+    glRotatef(220,0,1,0);
     //deg+=1.5;
     d=0.8;
     glPointSize(10.0);
@@ -124,7 +125,7 @@ void circle3d()
         glVertex3f(x-d,0,z-d); //-x,y=0,z
         glEnd();
         }
-
+        glLineWidth(0.8);
         {
 
         glColor3f(1,1,1);
@@ -319,7 +320,7 @@ void dust()
     //Translation motion along(x,y,z) axis
     d=0.7;
     glPointSize(2.0);
-    glColor3ub(0x43,0xA0,0x47);
+    glColor3ub(0xFF,0xCA,0x28);
     for(int i=0; i<60; i++)
     {
         if((int)avgarr.size()-2<=j)

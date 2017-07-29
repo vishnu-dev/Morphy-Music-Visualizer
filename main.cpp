@@ -18,9 +18,9 @@ int flag=0,temp=0,loading=0,timerFlag=0;
 int W,H;
 typedef unsigned long long timestamp_t;
 int j=0;
-float r=20.0;  //circle "r"
+float r=23.0;  //circle "r"
 float d=0.3;     //cuboid width/2
-float deg=30.0;
+float deg=15.0;
 double SAMPLE_COUNT;
 double SAMPLE_RATE;
 kiss_fft_cpx in[N], out[N];
@@ -70,6 +70,7 @@ void reshape(int w, int h)
 
 void drawStrokeText(char*str,int x,int y,int z)
 {
+    glLineWidth(1);
     char *c;
     float wt = glutStrokeLength(GLUT_STROKE_ROMAN,(unsigned char*)str)*0.4;
     glPushMatrix();
@@ -86,6 +87,7 @@ void drawStrokeText(char*str,int x,int y,int z)
 void instructText(char*str,int x,int y,int z)
 {
     char *c;
+    glLineWidth(1);
     float wt = glutStrokeLength(GLUT_STROKE_ROMAN,(unsigned char*)str)*0.1;
     glPushMatrix();
     glTranslatef(-wt/2, y+8,z);
@@ -399,6 +401,8 @@ void *callLoadData(void *thread)
 {
 	loadData();
 	loading=1;
+	glutKeyboardFunc(processKeys);
+    glutSpecialFunc(processSpecialKeys);
     pthread_exit(NULL);
 }
 
@@ -420,6 +424,8 @@ void loadingScreen()
         i+=.5;
     }
     rot_val+=1;
+    if(rot_val>360)
+        rot_val-=360;
 }
 void display(void)
 {
@@ -433,6 +439,8 @@ void display(void)
     if(loading==0){
     	loadingScreen();
     	if(timerFlag++==0){
+            glutKeyboardFunc(NULL);
+            glutSpecialFunc(NULL);
     		rc1 = pthread_create(&threads[0], NULL, callLoadData, (void *)0);
 	        if (rc1){
 	            cout << "Error:unable to create thread rc2," << rc1 << endl;
