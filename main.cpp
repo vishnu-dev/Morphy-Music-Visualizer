@@ -12,7 +12,9 @@ vector<unsigned char> logo;
 sf::SoundBuffer buffer;
 sf::Sound sound(buffer);
 
-int flag=0,temp=0;
+pthread_t threads[1]; //for multi threading
+int rc1;
+int flag=0,temp=0,loading=0,timerFlag=0;
 int W,H;
 typedef unsigned long long timestamp_t;
 int j=0;
@@ -26,8 +28,10 @@ int styleselect=0;
 int NO_STYLE=5;
 int countr=0,countg=0,countb=0;
 float curtime;
+string fName;
 
 static timestamp_t
+
 get_timestamp ()
 {
     struct timeval now;
@@ -49,16 +53,6 @@ void getFft(const kiss_fft_cpx in[N], kiss_fft_cpx out[N])
         exit(-1);
     }
 
-}
-
-/** print vector **/
-void print_vec(const std::vector<int> vec)
-{
-    for (auto x : vec)
-    {
-        std::cout << ' ' << x;
-    }
-    std::cout << '\n';
 }
 
 void reshape(int w, int h)
@@ -217,102 +211,17 @@ void idle()
     glutPostRedisplay();
 }
 
-void display(void)
+void loadlogo()
 {
-    //sets color buffer bit
-    glClearColor(28/255.0,49/255.0,58/255.0,0.0);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  //clears display with buffer color & depth values set in init()
-    //circle
-    glLoadIdentity();  //Loads identity matrix for each iteration of display
-    //circle3d();
-    glColor3f(0,1,0);
-
-    if(flag==0)
+    int error;
+    unsigned width = 250;
+    unsigned height = 250;
+    const char* name = "logo.png";
+    if((error=lodepng::decode(logo,width,height,name)))
     {
-        glRasterPos3f(-200,-150,-500);
-        glDrawPixels(250,250,GL_RGBA,GL_UNSIGNED_BYTE,&logo[0]);
-        drawStrokeText((char *)"MORPHY",-100,125,-200);
-        instructText((char *)"Press space to continue!",-75,-100,-200);
-        instructText((char *)"K. Vishnudev",-75,-180,-200);
-        instructText((char *)"Himanshu Kumar",-75,-200,-200);
+        printf("Error %s",lodepng_error_text(error));
+        exit(0);
     }
-    else
-    {
-        std::ostringstream ss;
-        float tottime = buffer.getDuration().asSeconds();
-        float cursor = sound.getPlayingOffset().asSeconds();
-        curtime = sound.getPlayingOffset().asMilliseconds();
-        //cout<<curtime<<endl;
-        float timepercent = (cursor/tottime)*760;
-        ss << (int)cursor;
-        const std::string tmp = "Time : " + ss.str();
-        const char* cstr = tmp.c_str();
-        glClearColor(0,0,0,0);
-        if(temp==1)
-        {
-            glColor3f(128/255.0,222/255.0,234/255.0);
-            glBegin(GL_POLYGON);
-            glVertex3f(-380,-290,-300.0);
-            glVertex3f(-380,-280,-300.0);
-            glVertex3f(-380+(int)timepercent,-280,-300.0);
-            glVertex3f(-380+(int)timepercent,-290,-300.0);
-            glEnd();
-
-            glColor3f(1,1,244/255.0);
-            glBegin(GL_LINE_LOOP);
-            glVertex3f(-380,-292.0,-300.0);
-            glVertex3f(-380,-278.0,-300.0);
-            glVertex3f(380,-278.0,-300.0);
-            glVertex3f(380,-292.0,-300.0);
-            glEnd();
-
-
-            instructText((char*)cstr,-250,-175,-200);
-            nav();
-
-            //instructText((char*)cstr,-250,-175,-200);
-            if(styleselect==0)
-            {
-                bars();
-            }
-            else if(styleselect==1)
-            {
-                circle3d();
-            }
-            else if(styleselect==2)
-            {
-                dust();
-            }
-            else if(styleselect==3)
-            {
-                pentagon();
-            }
-            else if(styleselect==4)
-            {
-                waves();
-            }
-//            else if(styleselect==4)
-//            {
-//                CubicalMesh();
-//            }
-//            else if(styleselect==6)
-//            {
-//                DWaves();
-//            }
-//            else if(styleselect==6)
-//            {
-//                mesh3D();
-//            }
-        }
-        else
-        {
-            //instructText((char *)"Paused!",-75,-200,-200);
-            pausebutton();
-        }
-    }
-    glutSwapBuffers();
-    //if(sound.getPlayingOffset().asSeconds()==buffer.getDuration().asSeconds())
-    //    exit(0);
 }
 
 int BinSrch(int freq)
@@ -329,31 +238,11 @@ int BinSrch(int freq)
     return i;
 }
 
-void loadlogo()
-{
-    int error;
-    unsigned width = 250;
-    unsigned height = 250;
-    const char* name = "logo.png";
-    if((error=lodepng::decode(logo,width,height,name)))
-    {
-        printf("Error %s",lodepng_error_text(error));
+void loadData(){
+	loadlogo();
+
+    if (!buffer.loadFromFile(fName.c_str()))
         exit(0);
-    }
-}
-
-int main(int argc, char *argv[])
-{
-    loadlogo();
-    //SFML usage error
-    if (argc < 2)
-    {
-        std::cout << "Usage: wave_iteration <FILENAME>" << std::endl;
-        return 1;
-    }
-
-    if (!buffer.loadFromFile(argv[1]))
-        return 0;
     //sound.play(); called just before display
     std::cout<<"SampleRate: "<<(SAMPLE_RATE= buffer.getSampleRate())<< std::endl;
     std::cout<<"SampleCount: "<<(SAMPLE_COUNT= buffer.getSampleCount())<< std::endl;
@@ -504,6 +393,151 @@ int main(int argc, char *argv[])
             cout<<endl;
             */
     }
+}
+
+void *callLoadData(void *thread)
+{
+	loadData();
+	loading=1;
+    pthread_exit(NULL);
+}
+
+void loadingScreen()
+{
+    static int rot_val=0;
+    drawStrokeText((char *)"Loading!",-100,125,-200);
+    glColor3f(1,1,1);
+    glRotated(-rot_val,0,0,1);
+    float i=1.5;
+    for(int theta=360;theta>0;theta-=30)
+    {
+        int x=60*cos(theta*3.141592/180);
+        int y=60*sin(theta*3.141592/180);
+        glPointSize(i);
+        glBegin(GL_POINTS);
+        glVertex3f(x,y,-200);
+        glEnd();
+        i+=.5;
+    }
+    rot_val+=1;
+}
+void display(void)
+{
+    //sets color buffer bit
+    glClearColor(28/255.0,49/255.0,58/255.0,0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  //clears display with buffer color & depth values set in init()
+    //circle
+    glLoadIdentity();  //Loads identity matrix for each iteration of display
+    //circle3d();
+    glColor3f(0,1,0);
+    if(loading==0){
+    	loadingScreen();
+    	if(timerFlag++==0){
+    		rc1 = pthread_create(&threads[0], NULL, callLoadData, (void *)0);
+	        if (rc1){
+	            cout << "Error:unable to create thread rc2," << rc1 << endl;
+	            exit(-1);
+	        }
+    	}
+    }
+    else if(flag==0)
+    {
+        glRasterPos3f(-200,-150,-500);
+        glDrawPixels(250,250,GL_RGBA,GL_UNSIGNED_BYTE,&logo[0]);
+        drawStrokeText((char *)"MORPHY",-100,125,-200);
+        instructText((char *)"Press space to continue!",-75,-100,-200);
+        instructText((char *)"K. Vishnudev",-75,-180,-200);
+        instructText((char *)"Himanshu Kumar",-75,-200,-200);
+    }
+    else
+    {
+        std::ostringstream ss;
+        float tottime = buffer.getDuration().asSeconds();
+        float cursor = sound.getPlayingOffset().asSeconds();
+        curtime = sound.getPlayingOffset().asMilliseconds();
+        //cout<<curtime<<endl;
+        float timepercent = (cursor/tottime)*760;
+        ss << (int)cursor;
+        const std::string tmp = "Time : " + ss.str();
+        const char* cstr = tmp.c_str();
+        glClearColor(0,0,0,0);
+        if(temp==1)
+        {
+            glColor3f(128/255.0,222/255.0,234/255.0);
+            glBegin(GL_POLYGON);
+            glVertex3f(-380,-290,-300.0);
+            glVertex3f(-380,-280,-300.0);
+            glVertex3f(-380+(int)timepercent,-280,-300.0);
+            glVertex3f(-380+(int)timepercent,-290,-300.0);
+            glEnd();
+
+            glColor3f(1,1,244/255.0);
+            glBegin(GL_LINE_LOOP);
+            glVertex3f(-380,-292.0,-300.0);
+            glVertex3f(-380,-278.0,-300.0);
+            glVertex3f(380,-278.0,-300.0);
+            glVertex3f(380,-292.0,-300.0);
+            glEnd();
+
+
+            instructText((char*)cstr,-250,-175,-200);
+            nav();
+
+            //instructText((char*)cstr,-250,-175,-200);
+            if(styleselect==0)
+            {
+                bars();
+            }
+            else if(styleselect==1)
+            {
+                circle3d();
+            }
+            else if(styleselect==2)
+            {
+                dust();
+            }
+            else if(styleselect==3)
+            {
+                pentagon();
+            }
+            else if(styleselect==4)
+            {
+                waves();
+            }
+//            else if(styleselect==4)
+//            {
+//                CubicalMesh();
+//            }
+//            else if(styleselect==6)
+//            {
+//                DWaves();
+//            }
+//            else if(styleselect==6)
+//            {
+//                mesh3D();
+//            }
+        }
+        else
+        {
+            //instructText((char *)"Paused!",-75,-200,-200);
+            pausebutton();
+        }
+    }
+    glutSwapBuffers();
+    //if(sound.getPlayingOffset().asSeconds()==buffer.getDuration().asSeconds())
+    //    exit(0);
+}
+
+int main(int argc, char *argv[])
+{
+    //SFML usage error
+    if (argc < 2)
+    {
+        std::cout << "Usage: wave_iteration <FILENAME>" << std::endl;
+        return 1;
+    }
+
+    fName=argv[1];
 
     glutInit(&argc, argv);
     W=glutGet(GLUT_SCREEN_WIDTH);
