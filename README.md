@@ -24,7 +24,7 @@ WAV, OGG/Vorbis and FLAC. Due to licensing issues MP3 is not supported.
 1. Download release from [here](https://github.com/vishnu-dev/Morphy/releases/latest).
 2. Extract the zip.
 3. Open command prompt in that directory and run the following command
-```bash
+```batch
 Morphy.exe <FILENAME>
 ```
 _NOTE : Make sure you provide an audio file format that is supported_ 
