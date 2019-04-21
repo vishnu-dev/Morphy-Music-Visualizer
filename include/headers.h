@@ -1,59 +1,69 @@
 #ifndef __HEADERS_H
 #define __HEADERS_H
 
-#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
-#include <cmath>
-#include <time.h>
+#include <sys/time.h>
 #include <pthread.h>
+#include <stdbool.h>
+#include <iostream>
+#include <stdlib.h>
+#include <dirent.h>     // For searching current directory
+#include <stdio.h>
 #include <errno.h>
-#include <vector>
-#include <array>
-#include <string>
 #include <sstream>
 #include <iomanip>
+#include <time.h>
+#include <vector>
+#include <string>
 #include <chrono>
-#include <dirent.h>     // For searching current directory
-#include <sys/time.h>
-#include <kiss_fft.h>
-#include <GL/glut.h>
-#include <GL/glext.h>
-#include <GL/freeglut.h>
+#include <cmath>
+#include <array>
+
 #include <SFML/Audio.hpp>
+#include <GL/freeglut.h>
+#include <kiss_fft.h>
+#include <GL/glext.h>
+#include <GL/glut.h>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979324
 #endif
-#define N 1024
-#define THREAD_MAX 1
-#define LOGO_PATH "./../logo/logo.png"
+
+#define LOGO_PATH   "./../logo/logo.png"
+#define N           1024
+#define THREAD_MAX  1
 
 using namespace std;
 
-extern std::vector<int> ampdb;
 extern std::vector<int> frequency;
+extern std::vector<int> ampdb;
 
-extern int countr,countg,countb;
-extern int j;
-extern float r;  //circle "r"
-extern float d;     //cuboid width/2
-extern float deg;
-extern vector< array<double,60> > avgarr; //for average value
-extern double SAMPLE_COUNT;
-extern double SAMPLE_RATE;
-extern float curtime;
-extern kiss_fft_cpx in[N], out[N];
+extern int  countr,
+            countg,
+            countb,
+            j;
 
+extern float    r,  /* circle "r" */
+                d,     /* cuboid width/2 */
+                deg,
+                curtime;
+
+extern vector< array<double,60> > avgarr;   // for average value
+
+extern double   SAMPLE_COUNT,
+                SAMPLE_RATE;
+
+extern kiss_fft_cpx in[N],
+                    out[N];
+
+//void CubicalMesh();
+void pausebutton();
 void circle3d();
+void pentagon();
+//void DWaves();
+//void mesh3D();
+void waves();
 void bars();
 void dust();
-void pentagon();
-//void CubicalMesh();
-void waves();
-//void mesh3D();
-//void DWaves();
-void pausebutton();
 void nav();
 
 #endif

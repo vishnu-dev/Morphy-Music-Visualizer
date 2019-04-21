@@ -1,6 +1,6 @@
 SRC=./../src/
-KISS_FFT_PATH=./../kissfft/
-LODE_PNG_PATH=./../lodepng/
+KISS_FFT_PATH=./../lib_resource/kissfft/
+LODE_PNG_PATH=./../lib_resource/lodepng/
 BIN=./../bin/
 OBJ=./../obj/
 INCLUDE=./../include/
@@ -18,7 +18,11 @@ LFLAG=	-lGL -lGLU -lglut 	\
 		-lsfml-audio 		\
 		-lpthread
 
-all: $(BIN)morphy
+all: directory $(BIN)morphy
+
+directory:
+	mkdir -p $(BIN)
+	mkdir -p $(OBJ)
 
 # link object files
 $(BIN)morphy: $(OBJ)kiss_fft.o $(OBJ)lodepng.o $(OBJ)effects.o $(OBJ)main.o
@@ -69,6 +73,6 @@ clean:
 	rm -f $(OBJ)*.o $(BIN)morphy
 
 # install requirements
-install: $(BIN)morphy
+install:
 	apt-get install freeglut3-dev
 	apt-get install libsfml-dev
