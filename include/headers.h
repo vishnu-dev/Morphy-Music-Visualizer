@@ -1,25 +1,33 @@
+#ifndef __HEADERS_H
+#define __HEADERS_H
+
 #include <iostream>
+#include <stdio.h>
 #include <stdlib.h>
 #include <cmath>
 #include <time.h>
+#include <pthread.h>
+#include <errno.h>
 #include <vector>
 #include <array>
-#include <SFML/Audio.hpp>
 #include <string>
 #include <sstream>
 #include <iomanip>
 #include <chrono>
+#include <dirent.h>     // For searching current directory
 #include <sys/time.h>
-#include "kissfft/kiss_fft.h"
+#include <kiss_fft.h>
 #include <GL/glut.h>
 #include <GL/glext.h>
 #include <GL/freeglut.h>
-#include <dirent.h>     // For searching current directory
+#include <SFML/Audio.hpp>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979324
 #endif
 #define N 1024
+#define THREAD_MAX 1
+#define LOGO_PATH "./../logo/logo.png"
 
 using namespace std;
 
@@ -47,3 +55,5 @@ void waves();
 //void DWaves();
 void pausebutton();
 void nav();
+
+#endif

@@ -1,6 +1,5 @@
-#include "headers.h"
-#include "lodepng/lodepng.h"
-#include "lodepng/lodepng.cpp"
+#include <headers.h>
+#include <lodepng.h>
 
 using namespace std;
 
@@ -157,9 +156,11 @@ void processSpecialKeys(int key, int x, int y)
             styleselect--;
         }
         break;
+
     case GLUT_KEY_RIGHT:
         styleselect=(styleselect+1)%NO_STYLE;
         break;
+
     case GLUT_KEY_UP:
         if(countr<255)
             countr+=5;
@@ -168,6 +169,7 @@ void processSpecialKeys(int key, int x, int y)
         else if(countr==255 && countg==255 && countb<255)
             countb+=5;
         break;
+
     case GLUT_KEY_DOWN:
         if(countr>0)
             countr-=5;
@@ -176,6 +178,7 @@ void processSpecialKeys(int key, int x, int y)
         else if(countr==0 && countg==0 && countb>0)
             countb-=5;
         break;
+
     case GLUT_KEY_F11:
         //glutFullScreen();
         glutFullScreenToggle();
@@ -204,6 +207,7 @@ void selectmusic()
     }
 }
 */
+
 void idle()
 {
     glutPostRedisplay();
@@ -214,7 +218,7 @@ void loadlogo()
     int error;
     unsigned width = 250;
     unsigned height = 250;
-    const char* name = "logo.png";
+    const char* name = LOGO_PATH;
     if((error=lodepng::decode(logo,width,height,name)))
     {
         printf("Error %s",lodepng_error_text(error));
@@ -275,6 +279,7 @@ void loadData(){
             in[j].r = multiplier * data[i];
             in[j].i = 0;  //stores N samples
         }
+
         if (framePointer < roof - N )
         {
             framePointer = i;
@@ -407,6 +412,7 @@ void loadingScreen()
     if(rot_val>360)
         rot_val-=360;
 }
+
 void display(void)
 {
     //sets color buffer bit
@@ -508,6 +514,23 @@ void display(void)
             pausebutton();
         }
     }
+    
+    // join loading thread to main thread
+    // if (loading != 0)
+    // {
+    //     int err_no = -1;
+    //     err_no = pthread_join(threads[0], NULL);
+    //     if (err_no == 0)
+    //     {
+    //         std::cout   << "loading thread joined main thread successfully." 
+    //                     << endl;
+    //     }
+    //     else
+    //     {
+    //         std::cout << "ERROR: " << strerror(errno) << endl;
+    //     }
+    // }
+
     glutSwapBuffers();
 }
 
@@ -524,7 +547,9 @@ int main(int argc, char *argv[])
 
     glutInit(&argc, argv);
     glutSetOption(GLUT_MULTISAMPLE, 8);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH|GL_MULTISAMPLE);
+    // GL_MULTISAMPLE not supported in Linux
+    // glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GL_MULTISAMPLE);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(800,600);
     glutInitWindowPosition(0,0);
     glutCreateWindow("Morphy");
