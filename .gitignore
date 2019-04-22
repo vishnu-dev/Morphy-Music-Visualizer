@@ -10,6 +10,8 @@
 *.txt
 *.pptx
 *.docx
+*.swp
 bin/
 temp/
 obj/
+.gitignore/
