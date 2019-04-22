@@ -1,0 +1,8 @@
+language: C++
+
+# safelist
+branches:
+  only:
+  - linux
+
+script: ./scripts/build-tests.sh

@@ -7,7 +7,7 @@ INCLUDE=./../include/
 DATA=./../dat/
 LOG=./../log/
 LIB=./../lib/
-CC=g++
+CC=g++ --std=c++0x
 CFLAG=-g -c -Wall
 IFLAG=-I
 OFLAG=-o
@@ -74,5 +74,7 @@ clean:
 
 # install requirements
 install:
+	add-apt-repository universe
+	apt-get update
 	apt-get install freeglut3-dev
 	apt-get install libsfml-dev
