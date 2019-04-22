@@ -7,7 +7,7 @@ INCLUDE=./../include/
 DATA=./../dat/
 LOG=./../log/
 LIB=./../lib/
-CC=g++
+CC=g++ --std=c++0x
 CFLAG=-g -c -Wall
 IFLAG=-I
 OFLAG=-o
