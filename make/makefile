@@ -74,5 +74,7 @@ clean:
 
 # install requirements
 install:
+	add-apt-repository universe
+	apt-get update
 	apt-get install freeglut3-dev
 	apt-get install libsfml-dev
