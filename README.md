@@ -35,14 +35,14 @@ _NOTE : Make sure you provide an audio file format that is supported_
 ***
 
 ### How to build & run on Linux?
-1. git clone https://github.com/vishnu-dev/Morphy-Music-Visualizer.git
-2. cd ./Morphy-Music-Visualizer/
-2. git checkout linux
-3. cd ./make/
-3. sudo make install
-4. make
-5. cd ./../bin/
-6. ./morphy <path/to/wav/ogg/flac/file>
+1. ```git clone https://github.com/vishnu-dev/Morphy-Music-Visualizer.git```
+2. ```cd ./Morphy-Music-Visualizer/```
+2. ```git checkout linux```
+3. ```cd ./make/```
+3. ```sudo make install```
+4. ```make```
+5. ```cd ./../bin/```
+6. ```morphy <path/to/wav/ogg/flac/file>```
 
 
 ### LICENSE
