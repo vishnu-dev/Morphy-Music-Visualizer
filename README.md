@@ -37,13 +37,22 @@ _NOTE : Make sure you provide an audio file format that is supported_
 ### How to build & run on Linux?
 1. ```git clone https://github.com/vishnu-dev/Morphy-Music-Visualizer.git```
 2. ```cd ./Morphy-Music-Visualizer/```
-2. ```git checkout linux```
-3. ```cd ./make/```
-3. ```sudo make install```
-4. ```make```
-5. ```cd ./../bin/```
-6. ```morphy <path/to/wav/ogg/flac/file>```
-
+3. ```git checkout linux```
+4. ```cd ./make/```
+5. ```Install Linux Dependencies stated below if needed```
+6. ```sudo make install```
+7. ```make```
+8. ```cd ./../bin/```
+9. ```morphy <path/to/wav/ogg/flac/file>```
+  #### Linux Dependencies
+  1) SFML - [Simple and Fast Multimedia Library](https://www.sfml-dev.org/tutorials/2.5/start-linux.php)
+  ```
+      sudo apt-get install libsfml-dev
+  ```
+  2) FreeGLUT - [OpenGL Utility Toolkit](https://stackoverflow.com/questions/11318510/installing-freeglut-on-linux)
+  ```
+      sudo apt-get install freeglut3-dev
+  ```
 
 ### LICENSE
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
