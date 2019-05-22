@@ -21,6 +21,7 @@ WAV, OGG/Vorbis and FLAC. Due to licensing issues MP3 is not supported.
 ***
 
 ### How to run?
+#### Windows
 1. Download release from [here](https://github.com/vishnu-dev/Morphy/releases/latest).
 2. Extract the zip.
 3. Open command prompt in that directory and run the following command
@@ -28,7 +29,8 @@ WAV, OGG/Vorbis and FLAC. Due to licensing issues MP3 is not supported.
 Morphy.exe <FILENAME>
 ```
 _NOTE : Make sure you provide an audio file format that is supported_ 
-
+#### Linux
+Refer to [linux branch](https://github.com/vishnu-dev/Morphy-Music-Visualizer/tree/linux) Readme.
 ***
 
 ### LICENSE
