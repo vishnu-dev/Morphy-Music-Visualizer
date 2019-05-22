@@ -1,6 +1,8 @@
 # Morphy
+An award winning music visualizer for Windows and Linux.
+1st Prize - JIT Graphics Day - An Intercollegiate Project Exhibition.
 
-### Abstract
+### Overview
 Morphy is a simple implementation of audio data visualization. For the given input audio file, program will give amplitude vs frequency plot by performing Fast Fourier Transform(FFT) on the audio samples. Visualization is achieved using OpenGL. This Project is implemented in C++ using OpenGL, LodePNG, SFML & Kiss FFT. User interaction is achieved using keyboard.
 
 ### GIFs
