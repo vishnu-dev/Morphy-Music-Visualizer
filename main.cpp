@@ -1,6 +1,7 @@
-#include "headers.h"
-#include "lodepng/lodepng.h"
+// Imports
 #include "lodepng/lodepng.cpp"
+#include "lodepng/lodepng.h"
+#include "headers.h"
 
 using namespace std;
 
