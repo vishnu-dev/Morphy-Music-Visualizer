@@ -26,6 +26,9 @@ Morphy is a simple implementation of audio data visualization. For the given inp
 ### Supported audio formats
 WAV, OGG/Vorbis and FLAC. Due to licensing issues MP3 is not supported.
 
+### Audio Sample
+sample-audio.mav provided.
+
 ***
 
 ### How to run?
