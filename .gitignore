@@ -4,7 +4,6 @@
 *.out
 *.exe
 *.o
-*.wav
 *.MP3
 *.dll
 *.txt
