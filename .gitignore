@@ -6,7 +6,7 @@
 *.o
 *.MP3
 *.dll
-
+*.txt
 *.pptx
 *.docx
 bin/
