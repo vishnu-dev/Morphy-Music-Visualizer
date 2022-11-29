@@ -434,8 +434,9 @@ void display(void)
         glDrawPixels(250,250,GL_RGBA,GL_UNSIGNED_BYTE,&logo[0]);
         drawStrokeText((char *)"MORPHY",-100,125,-200);
         instructText((char *)"Press space to continue!",-75,-100,-200);
-        instructText((char *)"K. Vishnudev",-75,-180,-200);
-        instructText((char *)"Himanshu Kumar",-75,-200,-200);
+        instructText((char *)"K. Vishnudev",-75,-160,-200);
+        instructText((char *)"Himanshu Kumar",-75,-180,-200);
+		instructText((char *)"Kartik Kamepalli",-75,-200,-200);
     }
     else
     {
